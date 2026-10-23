@@ -3,37 +3,267 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tópico 6 | Custeio Variavel e Margem de Contribuicao</title>
+    <title>Tópico 6: Limitações Legais e Conciliação Fisco-Gestão | CEST</title>
     <style>
-        :root { --primary: #002060; --secondary: #0080FF; --bg: #F4F7FA; --surface: #FFF; --border: #E2E8F0; }
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: system-ui, sans-serif; background: var(--bg); margin: 0; padding: 2rem; color: #0F172A; min-height: 100vh; display: flex; flex-direction: column; }
-        .container { max-width: 900px; width: 100%; margin: auto; }
-        .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 2.5rem; min-height: 480px; display: flex; flex-direction: column; justify-content: space-between; }
-        .tag { display: inline-block; font-size: 0.75rem; font-weight: 700; color: var(--secondary); background: #E6F2FF; padding: 4px 10px; border-radius: 6px; text-transform: uppercase; }
-        .title { font-size: 1.6rem; color: var(--primary); margin: 1rem 0; }
-        .highlight { background: #E6F2FF; border-left: 4px solid var(--secondary); padding: 1rem; border-radius: 4px; color: var(--primary); font-weight: 500; }
-        .controls { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); padding-top: 1rem; margin-top: 2rem; }
-        .btn { display: inline-block; padding: 0.65rem 1.25rem; font-size: 0.9rem; font-weight: 600; text-decoration: none; border-radius: 6px; }
+        :root {
+            --primary: #002060;
+            --primary-dark: #001138;
+            --secondary: #0080FF;
+            --secondary-light: #E6F2FF;
+            --danger: #EF4444;
+            --danger-light: #FEE2E2;
+            --success: #10B981;
+            --background: #F4F7FA;
+            --surface: #FFFFFF;
+            --text-primary: #0F172A;
+            --text-secondary: #475569;
+            --border: #CBD5E1;
+            --radius-md: 12px;
+            --shadow-md: 0 4px 20px -2px rgba(0,32,96,0.08);
+            --font-mono: 'SFMono-Regular', Consolas, 'Courier New', monospace;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: system-ui, -apple-system, sans-serif; background: var(--background); color: var(--text-primary); line-height: 1.6; min-height: 100vh; display: flex; flex-direction: column; }
+        
+        header { background: #FFF; border-bottom: 1px solid var(--border); padding: 0.85rem 1.5rem; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
+        .brand { text-decoration: none; color: var(--primary); font-weight: 700; font-size: 0.95rem; }
+        
+        .container { max-width: 980px; width: 100%; margin: 2rem auto; padding: 0 1rem; flex-grow: 1; display: flex; flex-direction: column; }
+        
+        .slide-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 2.5rem; box-shadow: var(--shadow-md); min-height: 520px; display: none; flex-direction: column; justify-content: space-between; }
+        .slide-card.active { display: flex; }
+        
+        .slide-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 1rem; margin-bottom: 1.5rem; }
+        .tag { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--secondary); background: var(--secondary-light); padding: 4px 10px; border-radius: 6px; }
+        .title { font-size: 1.6rem; color: var(--primary); font-weight: 800; margin-bottom: 1rem; }
+        
+        .notepad-box {
+            background: #2D3748;
+            color: #E2E8F0;
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+            line-height: 1.5;
+            padding: 1.25rem;
+            border-radius: 8px;
+            margin: 1.25rem 0;
+            white-space: pre-wrap;
+            border-left: 5px solid var(--secondary);
+        }
+
+        .highlight-box { background: var(--secondary-light); border-left: 4px solid var(--secondary); padding: 1.2rem; border-radius: 6px; margin: 1.25rem 0; color: var(--primary); font-weight: 500; }
+        .danger-box { background: var(--danger-light); border-left: 4px solid var(--danger); padding: 1.2rem; border-radius: 6px; margin: 1.25rem 0; color: #7F1D1D; font-weight: 500; }
+
+        .sim-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 1.5rem; background: #F8FAFC; border: 1px solid var(--border); border-radius: 8px; padding: 1.5rem; margin: 1.25rem 0; }
+        .form-group { display: flex; flex-direction: column; gap: 0.35rem; margin-bottom: 0.65rem; }
+        .form-label { font-size: 0.8rem; font-weight: 700; color: var(--primary); text-transform: uppercase; }
+        .form-control { padding: 0.65rem 0.85rem; border: 1.5px solid var(--border); border-radius: 6px; font-family: var(--font-mono); font-weight: 700; font-size: 0.95rem; }
+
+        .chart-box { background: #FFF; border: 1px solid var(--border); border-radius: 8px; padding: 1rem; display: flex; flex-direction: column; justify-content: center; min-height: 220px; }
+        .bar-container { width: 100%; display: flex; gap: 1.5rem; align-items: flex-end; height: 140px; padding-bottom: 5px; border-bottom: 2px solid var(--border); }
+        .bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; }
+        .bar-fill { width: 50px; background: var(--secondary); border-radius: 4px 4px 0 0; transition: height 0.3s; min-height: 5px; }
+        .bar-fill.tax { background: #F59E0B; }
+        .bar-label { font-size: 0.75rem; font-weight: 700; color: var(--text-secondary); margin-top: 6px; text-align: center; }
+
+        .controls { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); padding-top: 1.25rem; margin-top: 2rem; }
+        .btn { padding: 0.75rem 1.5rem; font-size: 0.9rem; font-weight: 700; border-radius: 6px; text-decoration: none; cursor: pointer; border: none; }
         .btn-nav { background: var(--primary); color: #FFF; }
         .btn-out { background: transparent; color: var(--primary); border: 1.5px solid var(--border); }
+        .progress-dots { display: flex; gap: 8px; }
+        .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--border); cursor: pointer; }
+        .dot.active { background: var(--secondary); width: 22px; border-radius: 10px; }
     </style>
 </head>
 <body>
+    <header>
+        <a href="index.html" class="brand">&larr; Portal da Aula 04</a>
+        <span style="font-size:0.85rem; font-weight:700; color:var(--text-secondary);">Tópico 6 de 10: Limitações Legais e Conciliação</span>
+    </header>
+
     <div class="container">
-        <div class="card">
+        <!-- Slide 1 -->
+        <div class="slide-card active" data-slide="1">
             <div>
-                <span class="tag">Tópico 6 de 10</span>
-                <h1 class="title">Tópico 6: Módulo Estrutural</h1>
-                <p style="color:#475569; margin-bottom:1rem;">Estrutura pronta para recepção dos slides e formulações parametrizadas da disciplina.</p>
-                <div class="highlight">Gestão de Custos • Prof. Msc. Philipe Sampaio Lima • CEST Anil</div>
+                <div class="slide-header">
+                    <span class="tag">Conformidade Legal</span>
+                    <span style="font-weight:700; color:var(--text-secondary);">Slide 01 / 04</span>
+                </div>
+                <h1 class="title">Por que o Custeio Variável é Proibido pelo Fisco?</h1>
+                <p>Apesar de sua excelência para a tomada de decisões, o <strong>Custeio Variável não é aceito</strong> pela legislação societária brasileira (Lei nº 6.404/76), pelo Conselho Federal de Contabilidade (NBC TG 16 / CPC 16) e pela Receita Federal (Regulamento do Imposto de Renda - RIR).</p>
+                
+                <div class="danger-box">
+                    <strong>Motivo Central da Rejeição:</strong> Violação do <em>Princípio da Competência</em> e da <em>Confrontação das Despesas com as Receitas</em>. A legislação exige que todo custo necessário para produzir o bem (mesmo fixo) fique ativado no Balanço Patrimonial até que a venda ocorra.
+                </div>
+
+                <p>Se a empresa pudesse jogar os custos fixos direto para a DRE sem vender os itens estocados, ela reduziria artificialmente o Lucro Tributável e pagaria menos IRPJ e CSLL no período.</p>
             </div>
-            <div class="controls">
-                <a href="5.html" class="btn btn-out">&larr; Anterior</a>
-                <span style="font-weight:700; color:var(--primary);">Slide 1 / 10</span>
-                <a href="7.html" class="btn btn-nav">Próximo &rarr;</a>
+            <div class="controls"></div>
+        </div>
+
+        <!-- Slide 2 -->
+        <div class="slide-card" data-slide="2">
+            <div>
+                <div class="slide-header">
+                    <span class="tag">Equação de Conciliação</span>
+                    <span style="font-weight:700; color:var(--text-secondary);">Slide 02 / 04</span>
+                </div>
+                <h1 class="title">A Fórmula da Reconciliação dos Lucros</h1>
+                <p>A auditoria e o comitê fiscal exigem saber exatamente a diferença entre o resultado apurado para a diretoria e o enviado ao Fisco:</p>
+
+                <div class="notepad-box">[ FORMULA DE CONCILIACAO NO BLOCO DE NOTAS ]
+Diferenca_de_Lucro = Lucro_na_Absorcao - Lucro_no_Variavel
+
+Diferenca_de_Lucro = (Estoque_Final_em_Unidades - Estoque_Inicial_em_Unidades) * Custo_Fixo_Unitario_Rateado
+
+Interpretacao:
+1. Se Producao > Vendas: Estoque aumenta -> Lucro da Absorcao e MAIOR.
+2. Se Producao < Vendas: Estoque diminui -> Lucro do Variavel e MAIOR.
+3. Se Producao = Vendas: Estoque e estavel -> Lucro da Absorcao e IGUAL ao Variavel.</div>
             </div>
+            <div class="controls"></div>
+        </div>
+
+        <!-- Slide 3 -->
+        <div class="slide-card" data-slide="3">
+            <div>
+                <div class="slide-header">
+                    <span class="tag">Simulador em Sala</span>
+                    <span style="font-weight:700; color:var(--text-secondary);">Slide 03 / 04</span>
+                </div>
+                <h1 class="title">Calculadora de Reconciliação Contábil-Fiscal</h1>
+                <p style="font-size:0.9rem; color:var(--text-secondary);">Ajuste a produção e o custo fixo para calcular a divergência entre os lucros:</p>
+
+                <div class="sim-grid">
+                    <div>
+                        <div class="form-group">
+                            <label class="form-label">Custo Fixo Total do Período (R$)</label>
+                            <input type="text" id="simCf" class="form-control" value="60.000,00" oninput="conciliar()">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Unidades Produzidas no Mês</label>
+                            <input type="text" id="simProd" class="form-control" value="3.000" oninput="conciliar()">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Unidades Vendidas no Mês</label>
+                            <input type="text" id="simVend" class="form-control" value="2.000" oninput="conciliar()">
+                        </div>
+                    </div>
+
+                    <div class="chart-box">
+                        <div style="font-size:0.8rem; font-weight:800; color:var(--primary); margin-bottom:8px; text-align:center;">
+                            Custos Fixos Apropriados ao Período
+                        </div>
+                        <div class="bar-container">
+                            <div class="bar-col">
+                                <div class="bar-fill" id="barVar" style="height:100%;"></div>
+                                <div class="bar-label">Custeio Variável<br><span id="lblCfVar" style="color:var(--secondary); font-weight:800;">R$ 60.000</span></div>
+                            </div>
+                            <div class="bar-col">
+                                <div class="bar-fill tax" id="barAbs" style="height:66.7%;"></div>
+                                <div class="bar-label">Absorção (CPV)<br><span id="lblCfAbs" style="color:#B45309; font-weight:800;">R$ 40.000</span></div>
+                            </div>
+                        </div>
+                        <div style="font-size:0.75rem; color:#475569; margin-top:8px; text-align:center;" id="lblConciliacao">
+                            Diferença retida no estoque: R$ 20.000,00
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="controls"></div>
+        </div>
+
+        <!-- Slide 4 -->
+        <div class="slide-card" data-slide="4">
+            <div>
+                <div class="slide-header">
+                    <span class="tag">Solução Prática</span>
+                    <span style="font-weight:700; color:var(--text-secondary);">Slide 04 / 04</span>
+                </div>
+                <h1 class="title">A Abordagem dos Sistemas Integrados (ERP)</h1>
+                <p>Como uma média ou grande empresa lida com essa dualidade no dia a dia?</p>
+                <div class="highlight-box">
+                    <strong>Estrutura de Dupla Visão:</strong><br>
+                    • <strong>Escrituração Fiscal / Legal:</strong> O ERP mantém o cadastro de custos por absorção para geração do Livro LALUR, Balanço Patrimonial e pagamento de tributos.<br><br>
+                    • <strong>Relatórios Gerenciais:</strong> O sistema gera a DRE em Custeio Variável para o Conselho de Administração, comitê comercial e diretores, permitindo decisões rápidas de mix e precificação.
+                </div>
+                <p style="text-align:center; margin-top:1.5rem;">
+                    No <strong>Tópico 7</strong>, usaremos essa visão gerencial para resolver o dilema de aceitar ou rejeitar <strong>pedidos especiais com desconto</strong>.
+                </p>
+            </div>
+            <div class="controls"></div>
         </div>
     </div>
+
+    <script>
+        let cur = 1;
+        const total = 4;
+
+        function parseBR(v) { return parseFloat((v || '0').replace(/\./g, '').replace(',', '.')) || 0; }
+        function fmtMoeda(n) { return "R$ " + n.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+
+        function conciliar() {
+            const cf = parseBR(document.getElementById('simCf').value);
+            const prod = parseBR(document.getElementById('simProd').value) || 1;
+            const vend = parseBR(document.getElementById('simVend').value) || 0;
+
+            const cfu = cf / prod;
+            const cfNoCpv = cfu * vend;
+            const difRetida = cf - cfNoCpv;
+
+            document.getElementById('lblCfVar').innerText = fmtMoeda(cf);
+            document.getElementById('lblCfAbs').innerText = fmtMoeda(cfNoCpv);
+
+            const maxCf = Math.max(cf, cfNoCpv, 1);
+            document.getElementById('barVar').style.height = ((cf / maxCf) * 100) + "%";
+            document.getElementById('barAbs').style.height = ((cfNoCpv / maxCf) * 100) + "%";
+
+            if (difRetida > 0) {
+                document.getElementById('lblConciliacao').innerText = 
+                    `Produção maior que vendas: ${fmtMoeda(difRetida)} de custo fixo ficou represado no estoque. O lucro na Absorção será maior por esse valor.`;
+            } else if (difRetida < 0) {
+                document.getElementById('lblConciliacao').innerText = 
+                    `Vendas maiores que produção: ${fmtMoeda(Math.abs(difRetida))} de estoques antigos foram vendidos. O lucro no Custeio Variável será maior por esse valor.`;
+            } else {
+                document.getElementById('lblConciliacao').innerText = 
+                    `Produção igual às vendas: Não há divergência entre os métodos contábeis.`;
+            }
+        }
+
+        function render() {
+            document.querySelectorAll('.controls').forEach(bar => {
+                bar.innerHTML = `
+                    <button class="btn btn-out" onclick="go(-1)" ${cur === 1 ? 'disabled style="opacity:0.4; cursor:not-allowed;"' : ''}>&larr; Anterior</button>
+                    <div class="progress-dots">
+                        ${Array.from({length: total}, (_, i) => `<span class="dot ${i+1 === cur ? 'active' : ''}" onclick="toSlide(${i+1})"></span>`).join('')}
+                    </div>
+                    ${cur < total 
+                        ? `<button class="btn btn-nav" onclick="go(1)">Próximo &rarr;</button>`
+                        : `<a href="7.html" class="btn btn-nav" style="background:#10B981;">Ir para Tópico 7 &rarr;</a>`
+                    }
+                `;
+            });
+        }
+
+        function show(n) {
+            document.querySelectorAll('.slide-card').forEach(c => c.classList.remove('active'));
+            document.querySelector(`.slide-card[data-slide="${n}"]`).classList.add('active');
+            cur = n;
+            render();
+        }
+
+        function go(s) { if(cur + s >= 1 && cur + s <= total) show(cur + s); }
+        function toSlide(n) { show(n); }
+
+        document.addEventListener('keydown', e => {
+            if (e.key === 'ArrowRight' && cur < total) go(1);
+            if (e.key === 'ArrowLeft' && cur > 1) go(-1);
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            render();
+            conciliar();
+        });
+    </script>
 </body>
 </html>

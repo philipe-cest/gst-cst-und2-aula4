@@ -3,37 +3,278 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tópico 5 | Custeio Variavel e Margem de Contribuicao</title>
+    <title>Tópico 5: Índice de Margem de Contribuição (IMC) | CEST</title>
     <style>
-        :root { --primary: #002060; --secondary: #0080FF; --bg: #F4F7FA; --surface: #FFF; --border: #E2E8F0; }
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: system-ui, sans-serif; background: var(--bg); margin: 0; padding: 2rem; color: #0F172A; min-height: 100vh; display: flex; flex-direction: column; }
-        .container { max-width: 900px; width: 100%; margin: auto; }
-        .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 2.5rem; min-height: 480px; display: flex; flex-direction: column; justify-content: space-between; }
-        .tag { display: inline-block; font-size: 0.75rem; font-weight: 700; color: var(--secondary); background: #E6F2FF; padding: 4px 10px; border-radius: 6px; text-transform: uppercase; }
-        .title { font-size: 1.6rem; color: var(--primary); margin: 1rem 0; }
-        .highlight { background: #E6F2FF; border-left: 4px solid var(--secondary); padding: 1rem; border-radius: 4px; color: var(--primary); font-weight: 500; }
-        .controls { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); padding-top: 1rem; margin-top: 2rem; }
-        .btn { display: inline-block; padding: 0.65rem 1.25rem; font-size: 0.9rem; font-weight: 600; text-decoration: none; border-radius: 6px; }
+        :root {
+            --primary: #002060;
+            --primary-dark: #001138;
+            --secondary: #0080FF;
+            --secondary-light: #E6F2FF;
+            --success: #10B981;
+            --danger: #EF4444;
+            --background: #F4F7FA;
+            --surface: #FFFFFF;
+            --text-primary: #0F172A;
+            --text-secondary: #475569;
+            --border: #CBD5E1;
+            --radius-md: 12px;
+            --shadow-md: 0 4px 20px -2px rgba(0,32,96,0.08);
+            --font-mono: 'SFMono-Regular', Consolas, 'Courier New', monospace;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: system-ui, -apple-system, sans-serif; background: var(--background); color: var(--text-primary); line-height: 1.6; min-height: 100vh; display: flex; flex-direction: column; }
+        
+        header { background: #FFF; border-bottom: 1px solid var(--border); padding: 0.85rem 1.5rem; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
+        .brand { text-decoration: none; color: var(--primary); font-weight: 700; font-size: 0.95rem; }
+        
+        .container { max-width: 980px; width: 100%; margin: 2rem auto; padding: 0 1rem; flex-grow: 1; display: flex; flex-direction: column; }
+        
+        .slide-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 2.5rem; box-shadow: var(--shadow-md); min-height: 520px; display: none; flex-direction: column; justify-content: space-between; }
+        .slide-card.active { display: flex; }
+        
+        .slide-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 1rem; margin-bottom: 1.5rem; }
+        .tag { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--secondary); background: var(--secondary-light); padding: 4px 10px; border-radius: 6px; }
+        .title { font-size: 1.6rem; color: var(--primary); font-weight: 800; margin-bottom: 1rem; }
+        
+        .notepad-box {
+            background: #2D3748;
+            color: #E2E8F0;
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+            line-height: 1.5;
+            padding: 1.25rem;
+            border-radius: 8px;
+            margin: 1.25rem 0;
+            white-space: pre-wrap;
+            border-left: 5px solid var(--secondary);
+        }
+
+        .highlight-box { background: var(--secondary-light); border-left: 4px solid var(--secondary); padding: 1.2rem; border-radius: 6px; margin: 1.25rem 0; color: var(--primary); font-weight: 500; }
+
+        .imc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; background: #F8FAFC; border: 1px solid var(--border); border-radius: 8px; padding: 1.5rem; margin: 1.25rem 0; }
+        .form-group { display: flex; flex-direction: column; gap: 0.35rem; margin-bottom: 0.75rem; }
+        .form-label { font-size: 0.8rem; font-weight: 700; color: var(--primary); text-transform: uppercase; }
+        .form-control { padding: 0.65rem 0.85rem; border: 1.5px solid var(--border); border-radius: 6px; font-family: var(--font-mono); font-weight: 700; font-size: 0.95rem; }
+
+        .gauge-panel { background: #FFF; border: 1px solid var(--border); border-radius: 8px; padding: 1.25rem; display: flex; flex-direction: column; justify-content: space-around; align-items: center; }
+        .radial-display { font-size: 2.5rem; font-weight: 800; color: var(--secondary); font-family: var(--font-mono); }
+        .progress-bar-total { width: 100%; height: 24px; background: #E2E8F0; border-radius: 6px; overflow: hidden; display: flex; margin-top: 10px; }
+        .seg-gasto { background: #EF4444; height: 100%; transition: width 0.3s ease; }
+        .seg-imc { background: #10B981; height: 100%; transition: width 0.3s ease; }
+
+        .controls { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); padding-top: 1.25rem; margin-top: 2rem; }
+        .btn { padding: 0.75rem 1.5rem; font-size: 0.9rem; font-weight: 700; border-radius: 6px; text-decoration: none; cursor: pointer; border: none; }
         .btn-nav { background: var(--primary); color: #FFF; }
         .btn-out { background: transparent; color: var(--primary); border: 1.5px solid var(--border); }
+        .progress-dots { display: flex; gap: 8px; }
+        .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--border); cursor: pointer; }
+        .dot.active { background: var(--secondary); width: 22px; border-radius: 10px; }
     </style>
 </head>
 <body>
+    <header>
+        <a href="index.html" class="brand">&larr; Portal da Aula 04</a>
+        <span style="font-size:0.85rem; font-weight:700; color:var(--text-secondary);">Tópico 5 de 10: Índice de Margem de Contribuição</span>
+    </header>
+
     <div class="container">
-        <div class="card">
+        <!-- Slide 1 -->
+        <div class="slide-card active" data-slide="1">
             <div>
-                <span class="tag">Tópico 5 de 10</span>
-                <h1 class="title">Tópico 5: Módulo Estrutural</h1>
-                <p style="color:#475569; margin-bottom:1rem;">Estrutura pronta para recepção dos slides e formulações parametrizadas da disciplina.</p>
-                <div class="highlight">Gestão de Custos • Prof. Msc. Philipe Sampaio Lima • CEST Anil</div>
+                <div class="slide-header">
+                    <span class="tag">Métrica Percentual</span>
+                    <span style="font-weight:700; color:var(--text-secondary);">Slide 01 / 04</span>
+                </div>
+                <h1 class="title">O que é o IMC ou Margem Relativa?</h1>
+                <p>Enquanto a Margem de Contribuição unitária é expressa em reais (R$/unidade), o <strong>Índice de Margem de Contribuição (IMC)</strong> expressa essa grandeza em termos percentuais sobre o faturamento.</p>
+                
+                <div class="notepad-box">[ FORMULAS NO BLOCO DE NOTAS ]
+Indice_de_Margem_de_Contribuicao (IMC) = Margem_de_Contribuicao_Unitaria / Preco_de_Venda
+Ou:
+Indice_de_Margem_de_Contribuicao (IMC) = Margem_de_Contribuicao_Total / Receita_Total_Liquida
+
+Indice_de_Gastos_Variaveis (IGV) = Gastos_Variaveis_Totais / Receita_Total_Liquida
+
+Relacao Fundamental:
+IMC + IGV = 100% (ou 1,00)</div>
+
+                <div class="highlight-box">
+                    <strong>Interpretação Econômica:</strong> Um IMC de 35% indica que para cada <strong>R$ 100,00</strong> que entram no caixa pela venda desse produto, sobram limpos <strong>R$ 35,00</strong> para pagar as contas fixas da empresa e gerar lucro. Os R$ 65,00 restantes foram consumidos pelos insumos variáveis.
+                </div>
             </div>
-            <div class="controls">
-                <a href="4.html" class="btn btn-out">&larr; Anterior</a>
-                <span style="font-weight:700; color:var(--primary);">Slide 1 / 10</span>
-                <a href="6.html" class="btn btn-nav">Próximo &rarr;</a>
+            <div class="controls"></div>
+        </div>
+
+        <!-- Slide 2 -->
+        <div class="slide-card" data-slide="2">
+            <div>
+                <div class="slide-header">
+                    <span class="tag">Análise Estratégica</span>
+                    <span style="font-weight:700; color:var(--text-secondary);">Slide 02 / 04</span>
+                </div>
+                <h1 class="title">Quando Usar a MCu e Quando Usar o IMC?</h1>
+                <p>O Administrador deve escolher a métrica correta dependendo do tipo de decisão gerencial:</p>
+
+                <div class="notepad-box">[ GUIA DE ESCOLHA EXECUTIVA ]
+1. Use a MCu (em Reais):
+   - Quando estiver decidindo sobre volumes unitarios de producao.
+   - Quando quiser saber o impacto direto de vender X pecas a mais.
+   - Para calcular o Ponto de Equilibrio Contabil em UNIDADES fisicas.
+
+2. Use o IMC (em Percentual):
+   - Para empresas comerciais ou de servicos com milhares de itens no catalogo.
+   - Para calcular o Ponto de Equilibrio em VALOR MONETARIO (R$ de faturamento).
+   - Para comparar a rentabilidade de linhas com faixas de preco totalmente distintas.</div>
             </div>
+            <div class="controls"></div>
+        </div>
+
+        <!-- Slide 3 -->
+        <div class="slide-card" data-slide="3">
+            <div>
+                <div class="slide-header">
+                    <span class="tag">Simulador em Sala</span>
+                    <span style="font-weight:700; color:var(--text-secondary);">Slide 03 / 04</span>
+                </div>
+                <h1 class="title">Calculadora de IMC e Rentabilidade</h1>
+                <p style="font-size:0.9rem; color:var(--text-secondary);">Simule como descontos comerciais ou aumentos de custos afetam percentualmente a margem:</p>
+
+                <div class="imc-grid">
+                    <div>
+                        <div class="form-group">
+                            <label class="form-label">Preço de Venda Unitário (R$)</label>
+                            <input type="text" id="inPv5" class="form-control" value="200,00" oninput="calcularIMC()">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Custo Variável Unitário (R$)</label>
+                            <input type="text" id="inCv5" class="form-control" value="110,00" oninput="calcularIMC()">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Despesa Variável / Impostos (R$)</label>
+                            <input type="text" id="inDv5" class="form-control" value="30,00" oninput="calcularIMC()">
+                        </div>
+                    </div>
+
+                    <div class="gauge-panel">
+                        <span style="font-size:0.8rem; font-weight:700; text-transform:uppercase; color:var(--text-secondary);">Índice de Margem (IMC)</span>
+                        <div class="radial-display" id="lblImcVal">30,0%</div>
+                        <div style="font-size:0.85rem; font-weight:700; color:var(--primary); margin-bottom:4px;">
+                            MC Unitária: <span id="lblMcu5">R$ 60,00</span>
+                        </div>
+                        <div class="progress-bar-total">
+                            <div class="seg-gasto" id="barGasto5" style="width:70%;"></div>
+                            <div class="seg-imc" id="barImc5" style="width:30%;"></div>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; width:100%; font-size:0.75rem; font-weight:700; margin-top:4px;">
+                            <span style="color:#EF4444;" id="lblGastoPerc5">Gastos: 70%</span>
+                            <span style="color:#10B981;" id="lblImcPerc5">IMC: 30%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="controls"></div>
+        </div>
+
+        <!-- Slide 4 -->
+        <div class="slide-card" data-slide="4">
+            <div>
+                <div class="slide-header">
+                    <span class="tag">Aplicação em Varejo e Serviços</span>
+                    <span style="font-weight:700; color:var(--text-secondary);">Slide 04 / 04</span>
+                </div>
+                <h1 class="title">O IMC como Bússola do Faturamento</h1>
+                <p>Em empresas que não produzem um único item homogêneo (supermercados, hospitais, atacados), o IMC é a métrica padrão:</p>
+                
+                <div class="notepad-box">[ PROJECAO RAPIDA POR FATURAMENTO ]
+Faturamento_Necessario = Custo_Fixo_Total / IMC_Medio
+
+Exemplo:
+Se a empresa tem R$ 60.000 de custos fixos e opera com IMC medio de 30%:
+Faturamento_Minimo = R$ 60.000 / 0,30 = R$ 200.000,00 de vendas mensais.
+Abaixo de R$ 200.000 a empresa estara no prejuizo.</div>
+
+                <p style="text-align:center; margin-top:1.5rem;">
+                    No <strong>Tópico 6</strong>, analisaremos as restrições da legislação societária e a conciliação entre relatórios fiscais e gerenciais.
+                </p>
+            </div>
+            <div class="controls"></div>
         </div>
     </div>
+
+    <script>
+        let cur = 1;
+        const total = 4;
+
+        function parseBR(v) { return parseFloat((v || '0').replace(/\./g, '').replace(',', '.')) || 0; }
+        function fmtMoeda(n) { return "R$ " + n.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+
+        function calcularIMC() {
+            const pv = parseBR(document.getElementById('inPv5').value);
+            const cv = parseBR(document.getElementById('inCv5').value);
+            const dv = parseBR(document.getElementById('inDv5').value);
+
+            const gv = cv + dv;
+            const mcu = pv - gv;
+            const imc = pv > 0 ? (mcu / pv) * 100 : 0;
+            const igv = pv > 0 ? (gv / pv) * 100 : 0;
+
+            document.getElementById('lblMcu5').innerText = fmtMoeda(mcu);
+            document.getElementById('lblImcVal').innerText = imc.toFixed(1) + "%";
+
+            const pGasto = Math.min(100, Math.max(0, igv));
+            const pImc = Math.min(100, Math.max(0, imc));
+
+            document.getElementById('barGasto5').style.width = pGasto + "%";
+            document.getElementById('barImc5').style.width = pImc + "%";
+
+            document.getElementById('lblGastoPerc5').innerText = `Gastos: ${pGasto.toFixed(1)}%`;
+            document.getElementById('lblImcPerc5').innerText = `IMC: ${pImc.toFixed(1)}%`;
+
+            const elVal = document.getElementById('lblImcVal');
+            if (imc < 0) {
+                elVal.style.color = '#EF4444';
+            } else if (imc < 20) {
+                elVal.style.color = '#F59E0B';
+            } else {
+                elVal.style.color = '#10B981';
+            }
+        }
+
+        function render() {
+            document.querySelectorAll('.controls').forEach(bar => {
+                bar.innerHTML = `
+                    <button class="btn btn-out" onclick="go(-1)" ${cur === 1 ? 'disabled style="opacity:0.4; cursor:not-allowed;"' : ''}>&larr; Anterior</button>
+                    <div class="progress-dots">
+                        ${Array.from({length: total}, (_, i) => `<span class="dot ${i+1 === cur ? 'active' : ''}" onclick="toSlide(${i+1})"></span>`).join('')}
+                    </div>
+                    ${cur < total 
+                        ? `<button class="btn btn-nav" onclick="go(1)">Próximo &rarr;</button>`
+                        : `<a href="6.html" class="btn btn-nav" style="background:#10B981;">Ir para Tópico 6 &rarr;</a>`
+                    }
+                `;
+            });
+        }
+
+        function show(n) {
+            document.querySelectorAll('.slide-card').forEach(c => c.classList.remove('active'));
+            document.querySelector(`.slide-card[data-slide="${n}"]`).classList.add('active');
+            cur = n;
+            render();
+        }
+
+        function go(s) { if(cur + s >= 1 && cur + s <= total) show(cur + s); }
+        function toSlide(n) { show(n); }
+
+        document.addEventListener('keydown', e => {
+            if (e.key === 'ArrowRight' && cur < total) go(1);
+            if (e.key === 'ArrowLeft' && cur > 1) go(-1);
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            render();
+            calcularIMC();
+        });
+    </script>
 </body>
 </html>

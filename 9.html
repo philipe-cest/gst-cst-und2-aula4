@@ -3,37 +3,276 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tópico 9 | Custeio Variavel e Margem de Contribuicao</title>
+    <title>Tópico 9: Mix de Vendas e Margem Ponderada | CEST</title>
     <style>
-        :root { --primary: #002060; --secondary: #0080FF; --bg: #F4F7FA; --surface: #FFF; --border: #E2E8F0; }
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: system-ui, sans-serif; background: var(--bg); margin: 0; padding: 2rem; color: #0F172A; min-height: 100vh; display: flex; flex-direction: column; }
-        .container { max-width: 900px; width: 100%; margin: auto; }
-        .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 2.5rem; min-height: 480px; display: flex; flex-direction: column; justify-content: space-between; }
-        .tag { display: inline-block; font-size: 0.75rem; font-weight: 700; color: var(--secondary); background: #E6F2FF; padding: 4px 10px; border-radius: 6px; text-transform: uppercase; }
-        .title { font-size: 1.6rem; color: var(--primary); margin: 1rem 0; }
-        .highlight { background: #E6F2FF; border-left: 4px solid var(--secondary); padding: 1rem; border-radius: 4px; color: var(--primary); font-weight: 500; }
-        .controls { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); padding-top: 1rem; margin-top: 2rem; }
-        .btn { display: inline-block; padding: 0.65rem 1.25rem; font-size: 0.9rem; font-weight: 600; text-decoration: none; border-radius: 6px; }
+        :root {
+            --primary: #002060;
+            --primary-dark: #001138;
+            --secondary: #0080FF;
+            --secondary-light: #E6F2FF;
+            --success: #10B981;
+            --danger: #EF4444;
+            --background: #F4F7FA;
+            --surface: #FFFFFF;
+            --text-primary: #0F172A;
+            --text-secondary: #475569;
+            --border: #CBD5E1;
+            --radius-md: 12px;
+            --shadow-md: 0 4px 20px -2px rgba(0,32,96,0.08);
+            --font-mono: 'SFMono-Regular', Consolas, 'Courier New', monospace;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: system-ui, -apple-system, sans-serif; background: var(--background); color: var(--text-primary); line-height: 1.6; min-height: 100vh; display: flex; flex-direction: column; }
+        
+        header { background: #FFF; border-bottom: 1px solid var(--border); padding: 0.85rem 1.5rem; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
+        .brand { text-decoration: none; color: var(--primary); font-weight: 700; font-size: 0.95rem; }
+        
+        .container { max-width: 980px; width: 100%; margin: 2rem auto; padding: 0 1rem; flex-grow: 1; display: flex; flex-direction: column; }
+        
+        .slide-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 2.5rem; box-shadow: var(--shadow-md); min-height: 520px; display: none; flex-direction: column; justify-content: space-between; }
+        .slide-card.active { display: flex; }
+        
+        .slide-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 1rem; margin-bottom: 1.5rem; }
+        .tag { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--secondary); background: var(--secondary-light); padding: 4px 10px; border-radius: 6px; }
+        .title { font-size: 1.6rem; color: var(--primary); font-weight: 800; margin-bottom: 1rem; }
+        
+        .notepad-box {
+            background: #2D3748;
+            color: #E2E8F0;
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+            line-height: 1.5;
+            padding: 1.25rem;
+            border-radius: 8px;
+            margin: 1.25rem 0;
+            white-space: pre-wrap;
+            border-left: 5px solid var(--secondary);
+        }
+
+        .highlight-box { background: var(--secondary-light); border-left: 4px solid var(--secondary); padding: 1.2rem; border-radius: 6px; margin: 1.25rem 0; color: var(--primary); font-weight: 500; }
+
+        .mix-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; background: #F8FAFC; border: 1px solid var(--border); border-radius: 8px; padding: 1.25rem; margin: 1.25rem 0; }
+        .form-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; font-size: 0.88rem; }
+        .form-row input { width: 95px; padding: 0.35rem 0.55rem; border: 1.5px solid var(--border); border-radius: 4px; font-family: var(--font-mono); font-weight: 700; text-align: right; }
+
+        .res-box { background: #FFF; border: 1px solid var(--border); border-radius: 8px; padding: 1.25rem; display: flex; flex-direction: column; justify-content: center; }
+        .res-item { display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0; border-bottom: 1px dashed var(--border); }
+        .res-item:last-child { border-bottom: none; }
+
+        .controls { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); padding-top: 1.25rem; margin-top: 2rem; }
+        .btn { padding: 0.75rem 1.5rem; font-size: 0.9rem; font-weight: 700; border-radius: 6px; text-decoration: none; cursor: pointer; border: none; }
         .btn-nav { background: var(--primary); color: #FFF; }
         .btn-out { background: transparent; color: var(--primary); border: 1.5px solid var(--border); }
+        .progress-dots { display: flex; gap: 8px; }
+        .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--border); cursor: pointer; }
+        .dot.active { background: var(--secondary); width: 22px; border-radius: 10px; }
     </style>
 </head>
 <body>
+    <header>
+        <a href="index.html" class="brand">&larr; Portal da Aula 04</a>
+        <span style="font-size:0.85rem; font-weight:700; color:var(--text-secondary);">Tópico 9 de 10: Mix de Vendas e Margem Ponderada</span>
+    </header>
+
     <div class="container">
-        <div class="card">
+        <!-- Slide 1 -->
+        <div class="slide-card active" data-slide="1">
             <div>
-                <span class="tag">Tópico 9 de 10</span>
-                <h1 class="title">Tópico 9: Módulo Estrutural</h1>
-                <p style="color:#475569; margin-bottom:1rem;">Estrutura pronta para recepção dos slides e formulações parametrizadas da disciplina.</p>
-                <div class="highlight">Gestão de Custos • Prof. Msc. Philipe Sampaio Lima • CEST Anil</div>
+                <div class="slide-header">
+                    <span class="tag">Composição da Carteira</span>
+                    <span style="font-weight:700; color:var(--text-secondary);">Slide 01 / 04</span>
+                </div>
+                <h1 class="title">A Dinâmica do Mix de Produtos</h1>
+                <p>Dificilmente uma empresa opera com um único produto. Na realidade multiportfólio, o faturamento global e o lucro dependem diretamente da <strong>participação relativa (mix)</strong> de cada item no total das vendas.</p>
+                
+                <div class="notepad-box">[ FORMULAS NO BLOCO DE NOTAS ]
+Margem_de_Contribuicao_Media_Ponderada (MC_media):
+MC_media = (MCu_A * %_Mix_A) + (MCu_B * %_Mix_B) + ... + (MCu_N * %_Mix_N)
+
+Indice_de_Margem_Medio (IMC_medio):
+IMC_medio = Margem_de_Contribuicao_Total_Geral / Receita_Total_Geral</div>
+
+                <div class="highlight-box">
+                    <strong>Alerta Gerencial:</strong> A empresa pode aumentar seu volume total de vendas em peças e, mesmo assim, ter queda de lucro se o mix mudar em favor de produtos com menor margem de contribuição unitária!
+                </div>
             </div>
-            <div class="controls">
-                <a href="8.html" class="btn btn-out">&larr; Anterior</a>
-                <span style="font-weight:700; color:var(--primary);">Slide 1 / 10</span>
-                <a href="10.html" class="btn btn-nav">Próximo &rarr;</a>
+            <div class="controls"></div>
+        </div>
+
+        <!-- Slide 2 -->
+        <div class="slide-card" data-slide="2">
+            <div>
+                <div class="slide-header">
+                    <span class="tag">Sensibilidade do Mix</span>
+                    <span style="font-weight:700; color:var(--text-secondary);">Slide 02 / 04</span>
+                </div>
+                <h1 class="title">O Efeito Substituição</h1>
+                <p>Veja como uma simples migração de demanda afeta o resultado financeiro:</p>
+
+                <div class="notepad-box">[ EXEMPLO PRATICO DE CANIBALIZACAO DE MARGEM ]
+Cenario 1 (Mix Equilibrado):
+- Venda: 500 un de A (MC = R$ 50) + 500 un de B (MC = R$ 20)
+- MCT = (500 * 50) + (500 * 20) = R$ 25.000 + R$ 10.000 = R$ 35.000
+
+Cenario 2 (Mudanca de Mix sem queda de volume total):
+- Venda: 200 un de A (MC = R$ 50) + 800 un de B (MC = R$ 20)
+- MCT = (200 * 50) + (800 * 20) = R$ 10.000 + R$ 16.000 = R$ 26.000
+
+Queda de Lucro: R$ 9.000 de perda de margem, embora a fabrica tenha continuado vendendo 1.000 unidades!</div>
             </div>
+            <div class="controls"></div>
+        </div>
+
+        <!-- Slide 3 -->
+        <div class="slide-card" data-slide="3">
+            <div>
+                <div class="slide-header">
+                    <span class="tag">Simulador em Sala</span>
+                    <span style="font-weight:700; color:var(--text-secondary);">Slide 03 / 04</span>
+                </div>
+                <h1 class="title">Calculadora de Margem Ponderada do Mix</h1>
+                <p style="font-size:0.9rem; color:var(--text-secondary);">Simule o volume vendido de duas linhas de produtos e observe o comportamento da margem média ponderada:</p>
+
+                <div class="mix-grid">
+                    <div>
+                        <strong style="color:var(--primary); font-size:0.85rem; display:block; margin-bottom:0.4rem;">Linha Premium (A)</strong>
+                        <div class="form-row">
+                            <span>Preço / Gasto Var.:</span>
+                            <div style="display:flex; gap:4px;">
+                                <input type="text" id="mix_pA" value="150" style="width:45px;" oninput="calcMix()">
+                                <input type="text" id="mix_gvA" value="90" style="width:45px;" oninput="calcMix()">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <span>Quantidade Vendida:</span>
+                            <input type="text" id="mix_qA" value="400" oninput="calcMix()">
+                        </div>
+
+                        <strong style="color:var(--secondary); font-size:0.85rem; display:block; margin:0.8rem 0 0.4rem 0;">Linha Básica (B)</strong>
+                        <div class="form-row">
+                            <span>Preço / Gasto Var.:</span>
+                            <div style="display:flex; gap:4px;">
+                                <input type="text" id="mix_pB" value="80" style="width:45px;" oninput="calcMix()">
+                                <input type="text" id="mix_gvB" value="55" style="width:45px;" oninput="calcMix()">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <span>Quantidade Vendida:</span>
+                            <input type="text" id="mix_qB" value="600" oninput="calcMix()">
+                        </div>
+                    </div>
+
+                    <div class="res-box">
+                        <div class="res-item">
+                            <span style="font-size:0.85rem; color:var(--text-secondary);">Proporção do Mix:</span>
+                            <strong id="lblMixProp">40% A / 60% B</strong>
+                        </div>
+                        <div class="res-item">
+                            <span style="font-size:0.85rem; color:var(--text-secondary);">Margens Unitárias:</span>
+                            <span>A: <strong style="color:#10B981;">R$ 60</strong> | B: <strong style="color:var(--secondary);">R$ 25</strong></span>
+                        </div>
+                        <div class="res-item">
+                            <span style="font-size:0.85rem; color:var(--text-secondary);">MC Média Ponderada:</span>
+                            <strong id="lblMcPond" style="font-size:1.2rem; color:var(--primary);">R$ 39,00 / un</strong>
+                        </div>
+                        <div class="res-item">
+                            <span style="font-size:0.85rem; color:var(--text-secondary);">Geração Total de Margem:</span>
+                            <strong id="lblMcTotGeral" style="font-size:1.2rem; color:#10B981;">R$ 39.000,00</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="controls"></div>
+        </div>
+
+        <!-- Slide 4 -->
+        <div class="slide-card" data-slide="4">
+            <div>
+                <div class="slide-header">
+                    <span class="tag">Conclusão do Módulo</span>
+                    <span style="font-weight:700; color:var(--text-secondary);">Slide 04 / 04</span>
+                </div>
+                <h1 class="title">Estratégia Comercial Alinhada a Custos</h1>
+                <p>O Administrador deve orientar a equipe comercial com foco na margem e não apenas no volume bruto:</p>
+                <div class="highlight-box">
+                    • Comissões de vendedores vinculadas à <strong>Margem de Contribuição gerada</strong>, e não à receita bruta.<br>
+                    • Campanhas de incentivo para produtos de alto índice de margem.<br>
+                    • Monitoramento constante da margem ponderada para antecipar desvios de lucratividade.
+                </div>
+                <p style="text-align:center; margin-top:1.5rem;">
+                    No <strong>Tópico 10</strong>, faremos a síntese geral de tomada de decisão e a transição para a Análise Custo-Volume-Lucro da Aula 05!
+                </p>
+            </div>
+            <div class="controls"></div>
         </div>
     </div>
+
+    <script>
+        let cur = 1;
+        const total = 4;
+
+        function parseBR(v) { return parseFloat((v || '0').replace(/\./g, '').replace(',', '.')) || 0; }
+        function fmtMoeda(n) { return "R$ " + n.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+
+        function calcMix() {
+            const pA = parseBR(document.getElementById('mix_pA').value);
+            const gvA = parseBR(document.getElementById('mix_gvA').value);
+            const qA = parseBR(document.getElementById('mix_qA').value);
+
+            const pB = parseBR(document.getElementById('mix_pB').value);
+            const gvB = parseBR(document.getElementById('mix_gvB').value);
+            const qB = parseBR(document.getElementById('mix_qB').value);
+
+            const mcA = pA - gvA;
+            const mcB = pB - gvB;
+
+            const totQtd = qA + qB || 1;
+            const propA = (qA / totQtd) * 100;
+            const propB = (qB / totQtd) * 100;
+
+            const mcTot = (qA * mcA) + (qB * mcB);
+            const mcPond = mcTot / totQtd;
+
+            document.getElementById('lblMixProp').innerText = `${propA.toFixed(0)}% A / ${propB.toFixed(0)}% B`;
+            document.getElementById('lblMcPond').innerText = fmtMoeda(mcPond) + " / un";
+            document.getElementById('lblMcTotGeral').innerText = fmtMoeda(mcTot);
+        }
+
+        function render() {
+            document.querySelectorAll('.controls').forEach(bar => {
+                bar.innerHTML = `
+                    <button class="btn btn-out" onclick="go(-1)" ${cur === 1 ? 'disabled style="opacity:0.4; cursor:not-allowed;"' : ''}>&larr; Anterior</button>
+                    <div class="progress-dots">
+                        ${Array.from({length: total}, (_, i) => `<span class="dot ${i+1 === cur ? 'active' : ''}" onclick="toSlide(${i+1})"></span>`).join('')}
+                    </div>
+                    ${cur < total 
+                        ? `<button class="btn btn-nav" onclick="go(1)">Próximo &rarr;</button>`
+                        : `<a href="10.html" class="btn btn-nav" style="background:#10B981;">Ir para Tópico 10 &rarr;</a>`
+                    }
+                `;
+            });
+        }
+
+        function show(n) {
+            document.querySelectorAll('.slide-card').forEach(c => c.classList.remove('active'));
+            document.querySelector(`.slide-card[data-slide="${n}"]`).classList.add('active');
+            cur = n;
+            render();
+        }
+
+        function go(s) { if(cur + s >= 1 && cur + s <= total) show(cur + s); }
+        function toSlide(n) { show(n); }
+
+        document.addEventListener('keydown', e => {
+            if (e.key === 'ArrowRight' && cur < total) go(1);
+            if (e.key === 'ArrowLeft' && cur > 1) go(-1);
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            render();
+            calcMix();
+        });
+    </script>
 </body>
 </html>

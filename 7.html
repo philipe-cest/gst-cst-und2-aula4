@@ -3,37 +3,273 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tópico 7 | Custeio Variavel e Margem de Contribuicao</title>
+    <title>Tópico 7: Decisão em Pedidos Especiais | Gestão de Custos CEST</title>
     <style>
-        :root { --primary: #002060; --secondary: #0080FF; --bg: #F4F7FA; --surface: #FFF; --border: #E2E8F0; }
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: system-ui, sans-serif; background: var(--bg); margin: 0; padding: 2rem; color: #0F172A; min-height: 100vh; display: flex; flex-direction: column; }
-        .container { max-width: 900px; width: 100%; margin: auto; }
-        .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 2.5rem; min-height: 480px; display: flex; flex-direction: column; justify-content: space-between; }
-        .tag { display: inline-block; font-size: 0.75rem; font-weight: 700; color: var(--secondary); background: #E6F2FF; padding: 4px 10px; border-radius: 6px; text-transform: uppercase; }
-        .title { font-size: 1.6rem; color: var(--primary); margin: 1rem 0; }
-        .highlight { background: #E6F2FF; border-left: 4px solid var(--secondary); padding: 1rem; border-radius: 4px; color: var(--primary); font-weight: 500; }
-        .controls { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); padding-top: 1rem; margin-top: 2rem; }
-        .btn { display: inline-block; padding: 0.65rem 1.25rem; font-size: 0.9rem; font-weight: 600; text-decoration: none; border-radius: 6px; }
+        :root {
+            --primary: #002060;
+            --primary-dark: #001138;
+            --secondary: #0080FF;
+            --secondary-light: #E6F2FF;
+            --success: #10B981;
+            --danger: #EF4444;
+            --background: #F4F7FA;
+            --surface: #FFFFFF;
+            --text-primary: #0F172A;
+            --text-secondary: #475569;
+            --border: #CBD5E1;
+            --radius-md: 12px;
+            --shadow-md: 0 4px 20px -2px rgba(0,32,96,0.08);
+            --font-mono: 'SFMono-Regular', Consolas, 'Courier New', monospace;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: system-ui, -apple-system, sans-serif; background: var(--background); color: var(--text-primary); line-height: 1.6; min-height: 100vh; display: flex; flex-direction: column; }
+        
+        header { background: #FFF; border-bottom: 1px solid var(--border); padding: 0.85rem 1.5rem; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
+        .brand { text-decoration: none; color: var(--primary); font-weight: 700; font-size: 0.95rem; }
+        
+        .container { max-width: 980px; width: 100%; margin: 2rem auto; padding: 0 1rem; flex-grow: 1; display: flex; flex-direction: column; }
+        
+        .slide-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 2.5rem; box-shadow: var(--shadow-md); min-height: 520px; display: none; flex-direction: column; justify-content: space-between; }
+        .slide-card.active { display: flex; }
+        
+        .slide-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 1rem; margin-bottom: 1.5rem; }
+        .tag { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--secondary); background: var(--secondary-light); padding: 4px 10px; border-radius: 6px; }
+        .title { font-size: 1.6rem; color: var(--primary); font-weight: 800; margin-bottom: 1rem; }
+        
+        .notepad-box {
+            background: #2D3748;
+            color: #E2E8F0;
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+            line-height: 1.5;
+            padding: 1.25rem;
+            border-radius: 8px;
+            margin: 1.25rem 0;
+            white-space: pre-wrap;
+            border-left: 5px solid var(--secondary);
+        }
+
+        .highlight-box { background: var(--secondary-light); border-left: 4px solid var(--secondary); padding: 1.2rem; border-radius: 6px; margin: 1.25rem 0; color: var(--primary); font-weight: 500; }
+
+        .sim-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; background: #F8FAFC; border: 1px solid var(--border); border-radius: 8px; padding: 1.5rem; margin: 1.25rem 0; }
+        .form-group { display: flex; flex-direction: column; gap: 0.35rem; }
+        .form-label { font-size: 0.8rem; font-weight: 700; color: var(--primary); text-transform: uppercase; }
+        .form-control { padding: 0.65rem 0.85rem; border: 1.5px solid var(--border); border-radius: 6px; font-family: var(--font-mono); font-weight: 700; font-size: 0.95rem; }
+
+        .result-panel { background: #FFF; border: 1px solid var(--border); border-radius: 8px; padding: 1.25rem; display: flex; flex-direction: column; justify-content: space-between; }
+        .decision-badge { padding: 0.75rem 1rem; border-radius: 6px; font-weight: 800; font-size: 1rem; text-align: center; margin-top: 0.75rem; }
+        .decision-badge.accept { background: #D1FAE5; color: #065F46; border: 1.5px solid #10B981; }
+        .decision-badge.reject { background: #FEE2E2; color: #991B1B; border: 1.5px solid #EF4444; }
+
+        .controls { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); padding-top: 1.25rem; margin-top: 2rem; }
+        .btn { padding: 0.75rem 1.5rem; font-size: 0.9rem; font-weight: 700; border-radius: 6px; text-decoration: none; cursor: pointer; border: none; }
         .btn-nav { background: var(--primary); color: #FFF; }
         .btn-out { background: transparent; color: var(--primary); border: 1.5px solid var(--border); }
+        .progress-dots { display: flex; gap: 8px; }
+        .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--border); cursor: pointer; }
+        .dot.active { background: var(--secondary); width: 22px; border-radius: 10px; }
     </style>
 </head>
 <body>
+    <header>
+        <a href="index.html" class="brand">&larr; Portal da Aula 04</a>
+        <span style="font-size:0.85rem; font-weight:700; color:var(--text-secondary);">Tópico 7 de 10: Pedidos Especiais</span>
+    </header>
+
     <div class="container">
-        <div class="card">
+        <!-- Slide 1 -->
+        <div class="slide-card active" data-slide="1">
             <div>
-                <span class="tag">Tópico 7 de 10</span>
-                <h1 class="title">Tópico 7: Módulo Estrutural</h1>
-                <p style="color:#475569; margin-bottom:1rem;">Estrutura pronta para recepção dos slides e formulações parametrizadas da disciplina.</p>
-                <div class="highlight">Gestão de Custos • Prof. Msc. Philipe Sampaio Lima • CEST Anil</div>
+                <div class="slide-header">
+                    <span class="tag">Decisão Tática</span>
+                    <span style="font-weight:700; color:var(--text-secondary);">Slide 01 / 04</span>
+                </div>
+                <h1 class="title">O Dilema da Encomenda Extraordinária</h1>
+                <p>Imagine que a capacidade prática instalada da sua empresa seja de 10.000 unidades por mês, mas o mercado regular só compra 7.000 unidades a R$ 100,00 cada. O custo unitário total na absorção (incluindo o custo fixo rateado) é de R$ 75,00, sendo R$ 45,00 de gastos variáveis e R$ 30,00 de fixos.</p>
+                <p>Um novo cliente oferece comprar 2.000 unidades pontuais pagando apenas <strong>R$ 60,00 por unidade</strong>. Você deve aceitar ou recusar?</p>
+                
+                <div class="notepad-box">[ RACIOCINIO COMPARATIVO NO BLOCO DE NOTAS ]
+Visao pelo Metodo de Absorcao Tradicional:
+- Preco oferecido pelo cliente: R$ 60,00
+- Custo unitario integral apurado: R$ 75,00
+- Parecer Contabil: RECUSAR, pois causaria prejuizo aparente de R$ 15,00 por unidade!
+
+Visao pelo Custeio Variavel Diferencial:
+- Preco oferecido: R$ 60,00
+- Custo variavel incremental que a producao gerara: R$ 45,00
+- Margem de Contribuicao Adicional: R$ 60,00 - R$ 45,00 = + R$ 15,00 por unidade!
+- Parecer Gerencial: ACEITAR, pois os custos fixos ja existem e o pedido adiciona R$ 30.000 de lucro extra!</div>
             </div>
-            <div class="controls">
-                <a href="6.html" class="btn btn-out">&larr; Anterior</a>
-                <span style="font-weight:700; color:var(--primary);">Slide 1 / 10</span>
-                <a href="8.html" class="btn btn-nav">Próximo &rarr;</a>
+            <div class="controls"></div>
+        </div>
+
+        <!-- Slide 2 -->
+        <div class="slide-card" data-slide="2">
+            <div>
+                <div class="slide-header">
+                    <span class="tag">Premissas Obrigatórias</span>
+                    <span style="font-weight:700; color:var(--text-secondary);">Slide 02 / 04</span>
+                </div>
+                <h1 class="title">As 3 Condições para Aceitar o Pedido</h1>
+                <p>O administrador só pode aplicar a lógica marginal de aceitação se preencher rigorosamente três requisitos operacionais:</p>
+                
+                <div class="highlight-box">
+                    <strong>1. Existência de Capacidade Ociosa:</strong> O pedido não pode canibalizar nem deslocar vendas regulares feitas ao preço cheio de tabela.<br><br>
+                    <strong>2. Mercados Totalmente Segmentados:</strong> Os clientes regulares não podem ter acesso a essa negociação especial (ex: exportação, produto sob marca própria do cliente, feiras sazonais), evitando guerras de preço internas.<br><br>
+                    <strong>3. Custos Fixos Inalterados:</strong> O lote extraordinário não pode exigir contratação de nova estrutura fixa permanente (ex: ampliação física ou novos supervisores).
+                </div>
             </div>
+            <div class="controls"></div>
+        </div>
+
+        <!-- Slide 3 -->
+        <div class="slide-card" data-slide="3">
+            <div>
+                <div class="slide-header">
+                    <span class="tag">Simulador Interativo</span>
+                    <span style="font-weight:700; color:var(--text-secondary);">Slide 03 / 04</span>
+                </div>
+                <h1 class="title">Simulador de Decisão de Pedidos Especiais</h1>
+                <p style="font-size:0.9rem; color:var(--text-secondary);">Teste as condições de preço ofertado e capacidade ociosa para obter o diagnóstico imediato de margem:</p>
+
+                <div class="sim-grid">
+                    <div>
+                        <div class="form-group" style="margin-bottom:0.6rem;">
+                            <label class="form-label">Preço Ofertado no Pedido (R$)</label>
+                            <input type="text" id="inPrecoEsp" class="form-control" value="62,00" oninput="simularPedido()">
+                        </div>
+                        <div class="form-group" style="margin-bottom:0.6rem;">
+                            <label class="form-label">Gastos Variáveis Incrementais (R$)</label>
+                            <input type="text" id="inGastoVarEsp" class="form-control" value="48,00" oninput="simularPedido()">
+                        </div>
+                        <div class="form-group" style="margin-bottom:0.6rem;">
+                            <label class="form-label">Quantidade do Pedido Especial (un)</label>
+                            <input type="text" id="inQtdEsp" class="form-control" value="1.500" oninput="simularPedido()">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Capacidade Ociosa Livre (un)</label>
+                            <input type="text" id="inCapLivre" class="form-control" value="2.000" oninput="simularPedido()">
+                        </div>
+                    </div>
+
+                    <div class="result-panel">
+                        <div>
+                            <div style="font-size:0.8rem; font-weight:700; color:var(--text-secondary); text-transform:uppercase;">Impacto Marginal Unitário</div>
+                            <div id="lblMcuEsp" style="font-size:1.5rem; font-weight:800; color:var(--primary); margin:0.25rem 0;">+ R$ 14,00 / un</div>
+                            <div style="font-size:0.85rem; color:var(--text-secondary);">Geração Adicional de Caixa: <strong id="lblLucroExtra" style="color:#10B981;">R$ 21.000,00</strong></div>
+                        </div>
+
+                        <div id="badgeDecisao" class="decision-badge accept">
+                            RECOMENDAÇÃO: ACEITAR PEDIDO
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="controls"></div>
+        </div>
+
+        <!-- Slide 4 -->
+        <div class="slide-card" data-slide="4">
+            <div>
+                <div class="slide-header">
+                    <span class="tag">Conclusão do Módulo</span>
+                    <span style="font-weight:700; color:var(--text-secondary);">Slide 04 / 04</span>
+                </div>
+                <h1 class="title">A Regra Geral de Decisão de Curto Prazo</h1>
+                <p>A decisão racional de preços especiais baseia-se na seguinte regra:</p>
+                
+                <div class="notepad-box">[ REGRA DECISORIA NO BLOCO DE NOTAS ]
+SE:
+Preco_Especial > Gasto_Variavel_Incremental
+E
+Capacidade_Ociosa >= Volume_do_Pedido_Especial
+E
+Nao_ha_Canibalizacao_do_Mercado_Regular
+ENTAO:
+ACEITAR_O_PEDIDO (Aumenta o lucro liquido global do periodo)
+
+CASO CONTRARIO:
+RECUSAR_O_PEDIDO (Gera prejuizo de caixa ou canibaliza receitas normais)</div>
+
+                <p style="text-align:center; margin-top:1.5rem;">
+                    No <strong>Tópico 8</strong>, examinaremos o dilema oposto: e quando NÃO há ociosidade, mas sim falta de horas de máquina (gargalo)?
+                </p>
+            </div>
+            <div class="controls"></div>
         </div>
     </div>
+
+    <script>
+        let cur = 1;
+        const total = 4;
+
+        function parseBR(v) { return parseFloat((v || '0').replace(/\./g, '').replace(',', '.')) || 0; }
+        function fmtMoeda(n) { return "R$ " + n.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+
+        function simularPedido() {
+            const p = parseBR(document.getElementById('inPrecoEsp').value);
+            const gv = parseBR(document.getElementById('inGastoVarEsp').value);
+            const q = parseBR(document.getElementById('inQtdEsp').value);
+            const cap = parseBR(document.getElementById('inCapLivre').value);
+
+            const mcu = p - gv;
+            const extra = mcu * q;
+
+            document.getElementById('lblMcuEsp').innerText = (mcu >= 0 ? "+ " : "- ") + fmtMoeda(Math.abs(mcu)) + " / un";
+            document.getElementById('lblLucroExtra').innerText = fmtMoeda(extra);
+
+            const badge = document.getElementById('badgeDecisao');
+
+            if (q > cap) {
+                badge.className = "decision-badge reject";
+                badge.innerText = "RECUSAR: CAPACIDADE INSUFICIENTE";
+                document.getElementById('lblLucroExtra').style.color = '#EF4444';
+            } else if (mcu <= 0) {
+                badge.className = "decision-badge reject";
+                badge.innerText = "RECUSAR: MARGEM NEGATIVA";
+                document.getElementById('lblLucroExtra').style.color = '#EF4444';
+            } else {
+                badge.className = "decision-badge accept";
+                badge.innerText = "RECOMENDAÇÃO: ACEITAR PEDIDO";
+                document.getElementById('lblLucroExtra').style.color = '#10B981';
+            }
+        }
+
+        function render() {
+            document.querySelectorAll('.controls').forEach(bar => {
+                bar.innerHTML = `
+                    <button class="btn btn-out" onclick="go(-1)" ${cur === 1 ? 'disabled style="opacity:0.4; cursor:not-allowed;"' : ''}>&larr; Anterior</button>
+                    <div class="progress-dots">
+                        ${Array.from({length: total}, (_, i) => `<span class="dot ${i+1 === cur ? 'active' : ''}" onclick="toSlide(${i+1})"></span>`).join('')}
+                    </div>
+                    ${cur < total 
+                        ? `<button class="btn btn-nav" onclick="go(1)">Próximo &rarr;</button>`
+                        : `<a href="8.html" class="btn btn-nav" style="background:#10B981;">Ir para Tópico 8 &rarr;</a>`
+                    }
+                `;
+            });
+        }
+
+        function show(n) {
+            document.querySelectorAll('.slide-card').forEach(c => c.classList.remove('active'));
+            document.querySelector(`.slide-card[data-slide="${n}"]`).classList.add('active');
+            cur = n;
+            render();
+        }
+
+        function go(s) { if(cur + s >= 1 && cur + s <= total) show(cur + s); }
+        function toSlide(n) { show(n); }
+
+        document.addEventListener('keydown', e => {
+            if (e.key === 'ArrowRight' && cur < total) go(1);
+            if (e.key === 'ArrowLeft' && cur > 1) go(-1);
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            render();
+            simularPedido();
+        });
+    </script>
 </body>
 </html>

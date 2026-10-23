@@ -3,37 +3,267 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tópico 1 | Custeio Variavel e Margem de Contribuicao</title>
+    <title>Tópico 1: Fundamentos do Custeio Variável | Gestão de Custos CEST</title>
     <style>
-        :root { --primary: #002060; --secondary: #0080FF; --bg: #F4F7FA; --surface: #FFF; --border: #E2E8F0; }
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: system-ui, sans-serif; background: var(--bg); margin: 0; padding: 2rem; color: #0F172A; min-height: 100vh; display: flex; flex-direction: column; }
-        .container { max-width: 900px; width: 100%; margin: auto; }
-        .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 2.5rem; min-height: 480px; display: flex; flex-direction: column; justify-content: space-between; }
-        .tag { display: inline-block; font-size: 0.75rem; font-weight: 700; color: var(--secondary); background: #E6F2FF; padding: 4px 10px; border-radius: 6px; text-transform: uppercase; }
-        .title { font-size: 1.6rem; color: var(--primary); margin: 1rem 0; }
-        .highlight { background: #E6F2FF; border-left: 4px solid var(--secondary); padding: 1rem; border-radius: 4px; color: var(--primary); font-weight: 500; }
-        .controls { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); padding-top: 1rem; margin-top: 2rem; }
-        .btn { display: inline-block; padding: 0.65rem 1.25rem; font-size: 0.9rem; font-weight: 600; text-decoration: none; border-radius: 6px; }
+        :root {
+            --primary: #002060;
+            --primary-dark: #001138;
+            --secondary: #0080FF;
+            --secondary-light: #E6F2FF;
+            --danger: #EF4444;
+            --danger-light: #FEE2E2;
+            --success: #10B981;
+            --background: #F4F7FA;
+            --surface: #FFFFFF;
+            --text-primary: #0F172A;
+            --text-secondary: #475569;
+            --border: #CBD5E1;
+            --radius-md: 12px;
+            --shadow-md: 0 4px 20px -2px rgba(0,32,96,0.08);
+            --font-mono: 'SFMono-Regular', Consolas, 'Courier New', monospace;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: system-ui, -apple-system, sans-serif; background: var(--background); color: var(--text-primary); line-height: 1.6; min-height: 100vh; display: flex; flex-direction: column; }
+        
+        header { background: #FFF; border-bottom: 1px solid var(--border); padding: 0.85rem 1.5rem; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
+        .brand { text-decoration: none; color: var(--primary); font-weight: 700; font-size: 0.95rem; }
+        
+        .container { max-width: 980px; width: 100%; margin: 2rem auto; padding: 0 1rem; flex-grow: 1; display: flex; flex-direction: column; }
+        
+        .slide-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 2.5rem; box-shadow: var(--shadow-md); min-height: 520px; display: none; flex-direction: column; justify-content: space-between; }
+        .slide-card.active { display: flex; }
+        
+        .slide-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 1rem; margin-bottom: 1.5rem; }
+        .tag { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--secondary); background: var(--secondary-light); padding: 4px 10px; border-radius: 6px; }
+        .title { font-size: 1.6rem; color: var(--primary); font-weight: 800; margin-bottom: 1rem; }
+        
+        .notepad-box {
+            background: #2D3748;
+            color: #E2E8F0;
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+            line-height: 1.5;
+            padding: 1.25rem;
+            border-radius: 8px;
+            margin: 1.25rem 0;
+            white-space: pre-wrap;
+            border-left: 5px solid var(--secondary);
+        }
+
+        .highlight-box { background: var(--secondary-light); border-left: 4px solid var(--secondary); padding: 1.2rem; border-radius: 6px; margin: 1.25rem 0; color: var(--primary); font-weight: 500; }
+        
+        .sim-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; background: #F8FAFC; border: 1px solid var(--border); border-radius: 8px; padding: 1.5rem; margin: 1.25rem 0; }
+        .form-group { display: flex; flex-direction: column; gap: 0.35rem; }
+        .form-label { font-size: 0.8rem; font-weight: 700; color: var(--primary); text-transform: uppercase; }
+        .form-control { padding: 0.65rem 0.85rem; border: 1.5px solid var(--border); border-radius: 6px; font-family: var(--font-mono); font-weight: 700; font-size: 0.95rem; }
+
+        .chart-container { background: #FFF; border: 1px solid var(--border); border-radius: 8px; padding: 1rem; display: flex; flex-direction: column; justify-content: center; min-height: 200px; }
+        .bar-wrapper { display: flex; gap: 2rem; align-items: flex-end; height: 140px; border-bottom: 2px solid var(--border); padding-bottom: 5px; }
+        .bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; }
+        .bar-fill { width: 50px; background: var(--secondary); border-radius: 4px 4px 0 0; transition: height 0.3s ease; min-height: 5px; }
+        .bar-fill.fixed-cost { background: #64748B; }
+        .bar-label { font-size: 0.75rem; font-weight: 700; color: var(--text-secondary); margin-top: 6px; text-align: center; }
+
+        .controls { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); padding-top: 1.25rem; margin-top: 2rem; }
+        .btn { padding: 0.75rem 1.5rem; font-size: 0.9rem; font-weight: 700; border-radius: 6px; text-decoration: none; cursor: pointer; border: none; }
         .btn-nav { background: var(--primary); color: #FFF; }
         .btn-out { background: transparent; color: var(--primary); border: 1.5px solid var(--border); }
+        .progress-dots { display: flex; gap: 8px; }
+        .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--border); cursor: pointer; }
+        .dot.active { background: var(--secondary); width: 22px; border-radius: 10px; }
     </style>
 </head>
 <body>
+    <header>
+        <a href="index.html" class="brand">&larr; Portal da Aula 04</a>
+        <span style="font-size:0.85rem; font-weight:700; color:var(--text-secondary);">Tópico 1 de 10: Fundamentos do Custeio Variável</span>
+    </header>
+
     <div class="container">
-        <div class="card">
+        <!-- Slide 1 -->
+        <div class="slide-card active" data-slide="1">
             <div>
-                <span class="tag">Tópico 1 de 10</span>
-                <h1 class="title">Tópico 1: Módulo Estrutural</h1>
-                <p style="color:#475569; margin-bottom:1rem;">Estrutura pronta para recepção dos slides e formulações parametrizadas da disciplina.</p>
-                <div class="highlight">Gestão de Custos • Prof. Msc. Philipe Sampaio Lima • CEST Anil</div>
+                <div class="slide-header">
+                    <span class="tag">Conceito Central</span>
+                    <span style="font-weight:700; color:var(--text-secondary);">Slide 01 / 04</span>
+                </div>
+                <h1 class="title">A Natureza dos Gastos Operacionais</h1>
+                <p>No ambiente gerencial, a distinção mais importante para quem toma decisões não é entre custo e despesa, mas entre <strong>gastos variáveis</strong> (que oscilam em função direta do volume produzido e vendido) e <strong>gastos fixos</strong> (que decorrem da capacidade instalada da organização).</p>
+                
+                <div class="notepad-box">[ FORMULACAO NO BLOCO DE NOTAS ]
+Gasto_Total = Gastos_Variaveis + Gastos_Fixos
+Custo_do_Produto_no_Custeio_Variavel = Materia_Prima + MOD_Variavel + CIF_Variavel
+Custos_Fixos = Despesas_do_Periodo (Lancados diretamente contra o resultado do mes)</div>
+
+                <div class="highlight-box">
+                    <strong>Ponto Chave:</strong> O Custeio Variável considera que os custos fixos existem para manter a empresa pronta para produzir, independentemente de ela fabricar 1 unidade ou 10.000 unidades. Logo, eles não agregam valor unitário ao produto estocado.
+                </div>
             </div>
-            <div class="controls">
-                <a href="index.html" class="btn btn-out">&larr; Índice</a>
-                <span style="font-weight:700; color:var(--primary);">Slide 1 / 10</span>
-                <a href="2.html" class="btn btn-nav">Próximo &rarr;</a>
+            <div class="controls"></div>
+        </div>
+
+        <!-- Slide 2 -->
+        <div class="slide-card" data-slide="2">
+            <div>
+                <div class="slide-header">
+                    <span class="tag">Contraste Metodológico</span>
+                    <span style="font-weight:700; color:var(--text-secondary);">Slide 02 / 04</span>
+                </div>
+                <h1 class="title">Absorção versus Custeio Variável</h1>
+                <p>O método de Absorção é obrigatório para balanços fiscais, mas esconde armadilhas gerenciais que o Custeio Variável neutraliza:</p>
+
+                <div class="notepad-box">[ COMPARATIVO DE TRATAMENTO DE CUSTOS ]
+Metodo por Absorcao:
+- Custos Variaveis -> Vao para os estoques dos produtos
+- Custos Fixos -> Rateados e embutidos nos estoques dos produtos
+- Consequencia: O custo unitario diminui quando a producao aumenta, mesmo sem vendas!
+
+Metodo Variavel (Direto):
+- Custos Variaveis -> Vao para os estoques dos produtos
+- Custos Fixos -> Deduzidos integralmente na DRE do periodo
+- Consequencia: O custo unitario de estoque e constante e nao depende do volume produzido!</div>
+
+                <p>Ao retirar os custos fixos do estoque, o Custeio Variável impede que a gerência manipule o lucro fabricando excedentes sem demanda.</p>
             </div>
+            <div class="controls"></div>
+        </div>
+
+        <!-- Slide 3 -->
+        <div class="slide-card" data-slide="3">
+            <div>
+                <div class="slide-header">
+                    <span class="tag">Simulador Interativo</span>
+                    <span style="font-weight:700; color:var(--text-secondary);">Slide 03 / 04</span>
+                </div>
+                <h1 class="title">Simulador de Comportamento de Custo</h1>
+                <p style="font-size:0.9rem; color:var(--text-secondary);">Modifique a produção para verificar o comportamento dos custos variáveis e a diluição aparente do custo fixo:</p>
+
+                <div class="sim-grid">
+                    <div>
+                        <div class="form-group" style="margin-bottom:0.75rem;">
+                            <label class="form-label">Custo Variável Unitário (R$)</label>
+                            <input type="text" id="inCvUnit" class="form-control" value="40,00" oninput="simularCusto()">
+                        </div>
+                        <div class="form-group" style="margin-bottom:0.75rem;">
+                            <label class="form-label">Custo Fixo Total do Período (R$)</label>
+                            <input type="text" id="inCfTotal" class="form-control" value="60.000,00" oninput="simularCusto()">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Volume de Produção (Unidades)</label>
+                            <input type="text" id="inVolume" class="form-control" value="2.000" oninput="simularCusto()">
+                        </div>
+                    </div>
+
+                    <div class="chart-container">
+                        <div style="font-size:0.8rem; font-weight:800; color:var(--primary); margin-bottom:8px; text-align:center;">
+                            Custo Unitário Apurado nos Métodos
+                        </div>
+                        <div class="bar-wrapper">
+                            <div class="bar-col">
+                                <div class="bar-fill" id="barVariavel" style="height:50%;"></div>
+                                <div class="bar-label">Custeio Variável<br><span id="lblCustoVarUnit" style="color:var(--secondary); font-weight:800;">R$ 40,00</span></div>
+                            </div>
+                            <div class="bar-col">
+                                <div class="bar-fill fixed-cost" id="barAbsorcao" style="height:85%;"></div>
+                                <div class="bar-label">Absorção<br><span id="lblCustoAbsUnit" style="color:#1E293B; font-weight:800;">R$ 70,00</span></div>
+                            </div>
+                        </div>
+                        <div style="font-size:0.75rem; color:#64748B; margin-top:8px; text-align:center;" id="lblExplicacao">
+                            No Custeio Variável o custo unitário permanece fixo em R$ 40,00.
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="controls"></div>
+        </div>
+
+        <!-- Slide 4 -->
+        <div class="slide-card" data-slide="4">
+            <div>
+                <div class="slide-header">
+                    <span class="tag">Conclusão do Módulo</span>
+                    <span style="font-weight:700; color:var(--text-secondary);">Slide 04 / 04</span>
+                </div>
+                <h1 class="title">A Base para o Conceito de Margem</h1>
+                <p>Ao adotar a premissa de que os custos fixos devem ser lançados diretamente contra o período, surge uma nova métrica fundamental: a <strong>Margem de Contribuição</strong>.</p>
+                
+                <div class="notepad-box">[ RESUMO E TRANSICAO ]
+1. Custo Fixo e custo de estar pronto para produzir.
+2. Custo Variavel e custo decorrente da decisao de produzir cada unidade.
+3. Se a receita unitaria supera o gasto variavel unitario, a venda deixa um saldo positivo.
+4. Esse saldo e o oxigenio financeiro da empresa.</div>
+
+                <p style="text-align:center; margin-top:1.5rem;">
+                    No <strong>Tópico 2</strong>, estudaremos a formulação exata e a utilidade da Margem de Contribuição!
+                </p>
+            </div>
+            <div class="controls"></div>
         </div>
     </div>
+
+    <script>
+        let cur = 1;
+        const total = 4;
+
+        function parseBR(v) { return parseFloat((v || '0').replace(/\./g, '').replace(',', '.')) || 0; }
+        function fmtMoeda(n) { return "R$ " + n.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+
+        function simularCusto() {
+            const cv = parseBR(document.getElementById('inCvUnit').value);
+            const cf = parseBR(document.getElementById('inCfTotal').value);
+            const vol = parseBR(document.getElementById('inVolume').value) || 1;
+
+            const custoAbs = cv + (cf / vol);
+
+            document.getElementById('lblCustoVarUnit').innerText = fmtMoeda(cv);
+            document.getElementById('lblCustoAbsUnit').innerText = fmtMoeda(custoAbs);
+
+            const maxC = Math.max(custoAbs, cv * 1.5, 1);
+            const hVar = Math.min(100, Math.max(10, (cv / maxC) * 100));
+            const hAbs = Math.min(100, Math.max(10, (custoAbs / maxC) * 100));
+
+            document.getElementById('barVariavel').style.height = hVar + "%";
+            document.getElementById('barAbsorcao').style.height = hAbs + "%";
+
+            document.getElementById('lblExplicacao').innerText = 
+                `Com ${vol.toLocaleString('pt-BR')} unidades, o custo fixo rateado na absorção é ${fmtMoeda(cf / vol)} por unidade. No variável, esse custo não entra no estoque.`;
+        }
+
+        function render() {
+            document.querySelectorAll('.controls').forEach(bar => {
+                bar.innerHTML = `
+                    <button class="btn btn-out" onclick="go(-1)" ${cur === 1 ? 'disabled style="opacity:0.4; cursor:not-allowed;"' : ''}>&larr; Anterior</button>
+                    <div class="progress-dots">
+                        ${Array.from({length: total}, (_, i) => `<span class="dot ${i+1 === cur ? 'active' : ''}" onclick="toSlide(${i+1})"></span>`).join('')}
+                    </div>
+                    ${cur < total 
+                        ? `<button class="btn btn-nav" onclick="go(1)">Próximo &rarr;</button>`
+                        : `<a href="2.html" class="btn btn-nav" style="background:#10B981;">Ir para Tópico 2 &rarr;</a>`
+                    }
+                `;
+            });
+        }
+
+        function show(n) {
+            document.querySelectorAll('.slide-card').forEach(c => c.classList.remove('active'));
+            document.querySelector(`.slide-card[data-slide="${n}"]`).classList.add('active');
+            cur = n;
+            render();
+        }
+
+        function go(s) { if(cur + s >= 1 && cur + s <= total) show(cur + s); }
+        function toSlide(n) { show(n); }
+
+        document.addEventListener('keydown', e => {
+            if (e.key === 'ArrowRight' && cur < total) go(1);
+            if (e.key === 'ArrowLeft' && cur > 1) go(-1);
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            render();
+            simularCusto();
+        });
+    </script>
 </body>
 </html>

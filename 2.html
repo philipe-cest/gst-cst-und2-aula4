@@ -3,37 +3,276 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tópico 2 | Custeio Variavel e Margem de Contribuicao</title>
+    <title>Tópico 2: Margem de Contribuição Unitária e Total | CEST</title>
     <style>
-        :root { --primary: #002060; --secondary: #0080FF; --bg: #F4F7FA; --surface: #FFF; --border: #E2E8F0; }
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: system-ui, sans-serif; background: var(--bg); margin: 0; padding: 2rem; color: #0F172A; min-height: 100vh; display: flex; flex-direction: column; }
-        .container { max-width: 900px; width: 100%; margin: auto; }
-        .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 2.5rem; min-height: 480px; display: flex; flex-direction: column; justify-content: space-between; }
-        .tag { display: inline-block; font-size: 0.75rem; font-weight: 700; color: var(--secondary); background: #E6F2FF; padding: 4px 10px; border-radius: 6px; text-transform: uppercase; }
-        .title { font-size: 1.6rem; color: var(--primary); margin: 1rem 0; }
-        .highlight { background: #E6F2FF; border-left: 4px solid var(--secondary); padding: 1rem; border-radius: 4px; color: var(--primary); font-weight: 500; }
-        .controls { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); padding-top: 1rem; margin-top: 2rem; }
-        .btn { display: inline-block; padding: 0.65rem 1.25rem; font-size: 0.9rem; font-weight: 600; text-decoration: none; border-radius: 6px; }
+        :root {
+            --primary: #002060;
+            --primary-dark: #001138;
+            --secondary: #0080FF;
+            --secondary-light: #E6F2FF;
+            --success: #10B981;
+            --danger: #EF4444;
+            --background: #F4F7FA;
+            --surface: #FFFFFF;
+            --text-primary: #0F172A;
+            --text-secondary: #475569;
+            --border: #CBD5E1;
+            --radius-md: 12px;
+            --shadow-md: 0 4px 20px -2px rgba(0,32,96,0.08);
+            --font-mono: 'SFMono-Regular', Consolas, 'Courier New', monospace;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: system-ui, -apple-system, sans-serif; background: var(--background); color: var(--text-primary); line-height: 1.6; min-height: 100vh; display: flex; flex-direction: column; }
+        
+        header { background: #FFF; border-bottom: 1px solid var(--border); padding: 0.85rem 1.5rem; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
+        .brand { text-decoration: none; color: var(--primary); font-weight: 700; font-size: 0.95rem; }
+        
+        .container { max-width: 980px; width: 100%; margin: 2rem auto; padding: 0 1rem; flex-grow: 1; display: flex; flex-direction: column; }
+        
+        .slide-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 2.5rem; box-shadow: var(--shadow-md); min-height: 520px; display: none; flex-direction: column; justify-content: space-between; }
+        .slide-card.active { display: flex; }
+        
+        .slide-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 1rem; margin-bottom: 1.5rem; }
+        .tag { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--secondary); background: var(--secondary-light); padding: 4px 10px; border-radius: 6px; }
+        .title { font-size: 1.6rem; color: var(--primary); font-weight: 800; margin-bottom: 1rem; }
+        
+        .notepad-box {
+            background: #2D3748;
+            color: #E2E8F0;
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+            line-height: 1.5;
+            padding: 1.25rem;
+            border-radius: 8px;
+            margin: 1.25rem 0;
+            white-space: pre-wrap;
+            border-left: 5px solid var(--secondary);
+        }
+
+        .highlight-box { background: var(--secondary-light); border-left: 4px solid var(--secondary); padding: 1.2rem; border-radius: 6px; margin: 1.25rem 0; color: var(--primary); font-weight: 500; }
+
+        .calc-panel { background: #F8FAFC; border: 1px solid var(--border); border-radius: 8px; padding: 1.5rem; margin: 1.25rem 0; }
+        .grid-inputs { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 1rem; margin-bottom: 1.25rem; }
+        .form-group { display: flex; flex-direction: column; gap: 0.35rem; }
+        .form-label { font-size: 0.8rem; font-weight: 700; color: var(--primary); text-transform: uppercase; }
+        .form-control { padding: 0.65rem 0.85rem; border: 1.5px solid var(--border); border-radius: 6px; font-family: var(--font-mono); font-weight: 700; font-size: 0.95rem; }
+
+        .result-bar-container { background: #FFF; border: 1px solid var(--border); border-radius: 6px; padding: 1rem; margin-top: 1rem; }
+        .bar-mc-track { height: 28px; background: #E2E8F0; border-radius: 4px; overflow: hidden; display: flex; }
+        .bar-mc-gastos { height: 100%; background: #EF4444; transition: width 0.3s; }
+        .bar-mc-saldo { height: 100%; background: #10B981; transition: width 0.3s; }
+        .bar-legend { display: flex; justify-content: space-between; font-size: 0.8rem; font-weight: 700; margin-top: 6px; }
+
+        .controls { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); padding-top: 1.25rem; margin-top: 2rem; }
+        .btn { padding: 0.75rem 1.5rem; font-size: 0.9rem; font-weight: 700; border-radius: 6px; text-decoration: none; cursor: pointer; border: none; }
         .btn-nav { background: var(--primary); color: #FFF; }
         .btn-out { background: transparent; color: var(--primary); border: 1.5px solid var(--border); }
+        .progress-dots { display: flex; gap: 8px; }
+        .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--border); cursor: pointer; }
+        .dot.active { background: var(--secondary); width: 22px; border-radius: 10px; }
     </style>
 </head>
 <body>
+    <header>
+        <a href="index.html" class="brand">&larr; Portal da Aula 04</a>
+        <span style="font-size:0.85rem; font-weight:700; color:var(--text-secondary);">Tópico 2 de 10: Margem de Contribuição</span>
+    </header>
+
     <div class="container">
-        <div class="card">
+        <!-- Slide 1 -->
+        <div class="slide-card active" data-slide="1">
             <div>
-                <span class="tag">Tópico 2 de 10</span>
-                <h1 class="title">Tópico 2: Módulo Estrutural</h1>
-                <p style="color:#475569; margin-bottom:1rem;">Estrutura pronta para recepção dos slides e formulações parametrizadas da disciplina.</p>
-                <div class="highlight">Gestão de Custos • Prof. Msc. Philipe Sampaio Lima • CEST Anil</div>
+                <div class="slide-header">
+                    <span class="tag">Conceituação Rigorosa</span>
+                    <span style="font-weight:700; color:var(--text-secondary);">Slide 01 / 04</span>
+                </div>
+                <h1 class="title">O que é Margem de Contribuição (MC)?</h1>
+                <p>A <strong>Margem de Contribuição</strong> é o valor que sobra da receita de vendas após abater todos os gastos variáveis (custos variáveis e despesas variáveis de vendas, como comissões e impostos sobre faturamento).</p>
+                
+                <div class="notepad-box">[ FORMULAS NO BLOCO DE NOTAS ]
+Margem_de_Contribuicao_Unitaria (MCu) = Preco_de_Venda (PV) - Gastos_Variaveis_Unitarios (GVu)
+Onde:
+GVu = Custo_Variavel_Unitario (CVu) + Despesa_Variavel_Unitaria (DVu)
+
+Margem_de_Contribuicao_Total (MCT) = Receita_Total - Gastos_Variaveis_Totais
+Ou:
+Margem_de_Contribuicao_Total (MCT) = MCu * Quantidade_Vendida (Q)</div>
+
+                <div class="highlight-box">
+                    <strong>Por que se chama Margem de Contribuição?</strong> Porque ela <em>contribui</em> primeiramente para amortizar a montanha de Custos Fixos da empresa. Depois que os custos fixos estão 100% cobertos, cada centavo adicional vira <strong>Lucro Líquido</strong> direto.
+                </div>
             </div>
-            <div class="controls">
-                <a href="1.html" class="btn btn-out">&larr; Anterior</a>
-                <span style="font-weight:700; color:var(--primary);">Slide 1 / 10</span>
-                <a href="3.html" class="btn btn-nav">Próximo &rarr;</a>
+            <div class="controls"></div>
+        </div>
+
+        <!-- Slide 2 -->
+        <div class="slide-card" data-slide="2">
+            <div>
+                <div class="slide-header">
+                    <span class="tag">Diferença Crítica</span>
+                    <span style="font-weight:700; color:var(--text-secondary);">Slide 02 / 04</span>
+                </div>
+                <h1 class="title">Margem de Contribuição NÃO é Lucro Bruto!</h1>
+                <p>Muitos gestores confundem esses dois conceitos fundamentais, gerando decisões equivocadas:</p>
+
+                <div class="notepad-box">[ DISTINCAO GERENCIAL ESSENCIAL ]
+Lucro_Bruto (Contabilidade Societaria / Absorcao):
+Lucro_Bruto = Receita_Liquida - Custo_dos_Produtos_Vendidos (CPV)
+* Contem custos fixos de fabrica rateados.
+* Ignora despesas variaveis (comissoes e fretes).
+
+Margem_de_Contribuicao (Contabilidade Gerencial / Custeio Variavel):
+Margem_de_Contribuicao = Receita_Liquida - (Custos_Variaveis + Despesas_Variaveis)
+* Limpa totalmente qualquer rateio fixo.
+* Inclui TODAS as variaveis operacionais.
+* Mostra com clareza se compensa ou nao vender mais uma unidade.</div>
             </div>
+            <div class="controls"></div>
+        </div>
+
+        <!-- Slide 3 -->
+        <div class="slide-card" data-slide="3">
+            <div>
+                <div class="slide-header">
+                    <span class="tag">Simulador em Sala</span>
+                    <span style="font-weight:700; color:var(--text-secondary);">Slide 03 / 04</span>
+                </div>
+                <h1 class="title">Calculadora e Decomposição do Preço</h1>
+                <p style="font-size:0.9rem; color:var(--text-secondary);">Insira os parâmetros para visualizar a proporção do preço consumida por gastos variáveis versus a sobra que gera margem:</p>
+
+                <div class="calc-panel">
+                    <div class="grid-inputs">
+                        <div class="form-group">
+                            <label class="form-label">Preço de Venda Unitário (R$)</label>
+                            <input type="text" id="inPv" class="form-control" value="120,00" oninput="calcularMC()">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Custo Variável Unitário (R$)</label>
+                            <input type="text" id="inCvu" class="form-control" value="65,00" oninput="calcularMC()">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Despesa Variável Unit. (R$)</label>
+                            <input type="text" id="inDvu" class="form-control" value="15,00" oninput="calcularMC()">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Quantidade Estimada (un)</label>
+                            <input type="text" id="inQtd" class="form-control" value="1.000" oninput="calcularMC()">
+                        </div>
+                    </div>
+
+                    <div class="result-bar-container">
+                        <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                            <span><strong>MC Unitária:</strong> <span id="lblMcu" style="color:#10B981; font-weight:800;">R$ 40,00</span></span>
+                            <span><strong>MC Total:</strong> <span id="lblMct" style="color:var(--primary); font-weight:800;">R$ 40.000,00</span></span>
+                        </div>
+                        <div class="bar-mc-track">
+                            <div class="bar-mc-gastos" id="barGastos" style="width:66.7%;"></div>
+                            <div class="bar-mc-saldo" id="barSaldo" style="width:33.3%;"></div>
+                        </div>
+                        <div class="bar-legend">
+                            <span style="color:#EF4444;" id="lblPercGasto">Gastos Variáveis: 66,7%</span>
+                            <span style="color:#10B981;" id="lblPercMC">Margem de Contribuição: 33,3%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="controls"></div>
+        </div>
+
+        <!-- Slide 4 -->
+        <div class="slide-card" data-slide="4">
+            <div>
+                <div class="slide-header">
+                    <span class="tag">Interpretação Gerencial</span>
+                    <span style="font-weight:700; color:var(--text-secondary);">Slide 04 / 04</span>
+                </div>
+                <h1 class="title">A Regra Decisória da Margem</h1>
+                <p>Na prática executiva de um Administrador:</p>
+                <div class="highlight-box">
+                    • <strong>MCu > 0:</strong> O produto é viável operacionalmente. Cada unidade vendida gera recursos para cobrir a estrutura fixa e gerar lucro.<br><br>
+                    • <strong>MCu = 0:</strong> O produto apenas troca dinheiro com o fornecedor; não ajuda a pagar as contas da empresa.<br><br>
+                    • <strong>MCu < 0:</strong> Situação crítica! Quanto mais a empresa vende, maior é o rombo no caixa. Esse produto deve ser imediatamente reformulado ou eliminado.
+                </div>
+                <p style="text-align:center; margin-top:1.5rem;">
+                    No <strong>Tópico 3</strong>, estruturaremos a DRE completa no padrão gerencial do Custeio Variável.
+                </p>
+            </div>
+            <div class="controls"></div>
         </div>
     </div>
+
+    <script>
+        let cur = 1;
+        const total = 4;
+
+        function parseBR(v) { return parseFloat((v || '0').replace(/\./g, '').replace(',', '.')) || 0; }
+        function fmtMoeda(n) { return "R$ " + n.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+
+        function calcularMC() {
+            const pv = parseBR(document.getElementById('inPv').value);
+            const cvu = parseBR(document.getElementById('inCvu').value);
+            const dvu = parseBR(document.getElementById('inDvu').value);
+            const qtd = parseBR(document.getElementById('inQtd').value) || 0;
+
+            const gvu = cvu + dvu;
+            const mcu = pv - gvu;
+            const mct = mcu * qtd;
+
+            document.getElementById('lblMcu').innerText = fmtMoeda(mcu);
+            document.getElementById('lblMct').innerText = fmtMoeda(mct);
+
+            const basePv = Math.max(pv, 0.01);
+            const percGasto = Math.min(100, Math.max(0, (gvu / basePv) * 100));
+            const percMC = Math.max(0, 100 - percGasto);
+
+            document.getElementById('barGastos').style.width = percGasto + "%";
+            document.getElementById('barSaldo').style.width = percMC + "%";
+
+            document.getElementById('lblPercGasto').innerText = `Gastos Variáveis: ${percGasto.toFixed(1)}%`;
+            document.getElementById('lblPercMC').innerText = `Margem de Contribuição: ${percMC.toFixed(1)}%`;
+            
+            if (mcu < 0) {
+                document.getElementById('lblMcu').style.color = '#EF4444';
+            } else {
+                document.getElementById('lblMcu').style.color = '#10B981';
+            }
+        }
+
+        function render() {
+            document.querySelectorAll('.controls').forEach(bar => {
+                bar.innerHTML = `
+                    <button class="btn btn-out" onclick="go(-1)" ${cur === 1 ? 'disabled style="opacity:0.4; cursor:not-allowed;"' : ''}>&larr; Anterior</button>
+                    <div class="progress-dots">
+                        ${Array.from({length: total}, (_, i) => `<span class="dot ${i+1 === cur ? 'active' : ''}" onclick="toSlide(${i+1})"></span>`).join('')}
+                    </div>
+                    ${cur < total 
+                        ? `<button class="btn btn-nav" onclick="go(1)">Próximo &rarr;</button>`
+                        : `<a href="3.html" class="btn btn-nav" style="background:#10B981;">Ir para Tópico 3 &rarr;</a>`
+                    }
+                `;
+            });
+        }
+
+        function show(n) {
+            document.querySelectorAll('.slide-card').forEach(c => c.classList.remove('active'));
+            document.querySelector(`.slide-card[data-slide="${n}"]`).classList.add('active');
+            cur = n;
+            render();
+        }
+
+        function go(s) { if(cur + s >= 1 && cur + s <= total) show(cur + s); }
+        function toSlide(n) { show(n); }
+
+        document.addEventListener('keydown', e => {
+            if (e.key === 'ArrowRight' && cur < total) go(1);
+            if (e.key === 'ArrowLeft' && cur > 1) go(-1);
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            render();
+            calcularMC();
+        });
+    </script>
 </body>
 </html>

@@ -3,27 +3,461 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel do Professor | Custeio Variavel e Margem de Contribuicao</title>
+    <title>Painel do Professor: Gabarito e Solucionador Passo a Passo | CEST Anil</title>
     <style>
-        :root { --primary: #002060; --bg: #F4F7FA; --surface: #FFF; --border: #E2E8F0; }
-        body { font-family: system-ui, sans-serif; background: var(--bg); margin: 0; padding: 2rem; color: #0F172A; }
-        .container { max-width: 900px; margin: 0 auto; }
-        header { background: var(--primary); color: #FFF; padding: 2rem; border-radius: 12px; margin-bottom: 2rem; }
-        .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 2rem; }
-        .btn { display: inline-block; margin-top: 1.5rem; padding: 0.75rem 1.5rem; background: var(--primary); color: #FFF; text-decoration: none; border-radius: 6px; font-weight: 700; }
+        :root {
+            --primary: #002060;
+            --primary-dark: #001138;
+            --secondary: #0080FF;
+            --secondary-light: #E6F2FF;
+            --success: #10B981;
+            --success-light: #D1FAE5;
+            --danger: #EF4444;
+            --background: #F4F7FA;
+            --surface: #FFFFFF;
+            --text-primary: #0F172A;
+            --text-secondary: #475569;
+            --border: #CBD5E1;
+            --radius-md: 10px;
+            --font-mono: 'SFMono-Regular', Consolas, 'Courier New', monospace;
+            --shadow-md: 0 4px 20px -2px rgba(0,32,96,0.08);
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: system-ui, -apple-system, sans-serif; background: var(--background); color: var(--text-primary); line-height: 1.6; }
+        .container { max-width: 1100px; margin: 0 auto; padding: 2rem 1.5rem; }
+
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: #FFFFFF; padding: 2rem 2.5rem; border-radius: var(--radius-md); margin-bottom: 2rem;
+            display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;
+        }
+        .header-title { font-size: 1.8rem; font-weight: 800; margin-bottom: 0.35rem; }
+        .header-badge { background: rgba(255,255,255,0.12); padding: 0.75rem 1.25rem; border-radius: 6px; text-align: right; border: 1px solid rgba(255,255,255,0.2); }
+
+        .nav-dock {
+            background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md);
+            padding: 1rem 1.5rem; margin-bottom: 2rem; position: sticky; top: 1rem; z-index: 100;
+            display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        .nav-links { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+        .nav-btn {
+            background: #F8FAFC; border: 1.5px solid var(--border); color: var(--primary);
+            font-weight: 700; font-size: 0.85rem; padding: 0.35rem 0.65rem; border-radius: 4px; text-decoration: none;
+        }
+        .nav-btn:hover { background: var(--secondary); color: #FFF; border-color: var(--secondary); }
+
+        .solver-card {
+            background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md);
+            padding: 2rem; margin-bottom: 2rem; border-top: 5px solid var(--secondary); box-shadow: var(--shadow-md);
+        }
+        .solver-header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1px solid var(--border); padding-bottom: 0.75rem; margin-bottom: 1.25rem; }
+        .card-title { font-size: 1.25rem; font-weight: 800; color: var(--primary); }
+        .card-tag { background: var(--secondary-light); color: var(--primary); font-size: 0.75rem; font-weight: 700; text-transform: uppercase; padding: 4px 10px; border-radius: 20px; }
+
+        .inputs-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.25rem; }
+        .form-group { display: flex; flex-direction: column; gap: 0.3rem; }
+        .form-label { font-size: 0.75rem; font-weight: 700; color: var(--primary); text-transform: uppercase; }
+        .form-control { padding: 0.65rem; font-size: 0.95rem; font-family: var(--font-mono); font-weight: 700; border: 1.5px solid var(--border); border-radius: 6px; }
+
+        .notepad-box {
+            background: #2D3748;
+            color: #E2E8F0;
+            font-family: var(--font-mono);
+            font-size: 0.88rem;
+            line-height: 1.5;
+            padding: 1.25rem;
+            border-radius: 6px;
+            white-space: pre-wrap;
+            border-left: 4px solid var(--secondary);
+            margin-bottom: 1.25rem;
+        }
+
+        .solution-box { background: #F8FAFC; border: 1px solid var(--border); border-radius: 8px; padding: 1.25rem; }
+        .step-list { list-style: none; display: flex; flex-direction: column; gap: 0.45rem; margin-bottom: 1rem; }
+        .step-item { font-family: var(--font-mono); font-size: 0.9rem; color: var(--text-primary); }
+
+        .res-final {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: #FFF; padding: 1.1rem 1.4rem; border-radius: 6px; display: flex; justify-content: space-between; align-items: center;
+        }
+        .res-val { font-size: 1.6rem; font-weight: 800; color: #A7F3D0; }
+        .dica-box { margin-top: 1rem; font-size: 0.88rem; color: #334155; background: #EFF6FF; border-left: 3px solid var(--secondary); padding: 0.75rem 1rem; border-radius: 4px; }
     </style>
 </head>
 <body>
+
     <div class="container">
         <header>
-            <h1 style="margin:0 0 0.5rem 0;">Painel do Professor: Solucionador em Tempo Real</h1>
-            <p style="margin:0; opacity:0.9;">Custeio Variavel e Margem de Contribuicao • Projeção em Sala</p>
+            <div>
+                <h1 class="header-title">Painel do Docente: Solucionador Passo a Passo</h1>
+                <p>Aula 04: Custeio Variável & Margem de Contribuição • Administração CEST Anil</p>
+            </div>
+            <div class="header-badge">
+                <strong style="font-size:1rem; display:block;">Prof. Msc. Philipe Sampaio Lima</strong>
+                <span>Gabarito Oficial das 10 Questões em Sala</span>
+            </div>
         </header>
-        <div class="card">
-            <h2 style="color:var(--primary); margin-top:0;">Calculadora Docente Parametrizável</h2>
-            <p style="color:#475569;">Placeholder pronto para receber as resoluções passo a passo e notas pedagógicas da aula.</p>
-            <a href="index.html" class="btn">&larr; Retornar ao Menu da Aula</a>
+
+        <div class="nav-dock">
+            <span style="font-size:0.8rem; font-weight:800; text-transform:uppercase; color:var(--primary);">Navegador das 10 Questões</span>
+            <div class="nav-links" id="navLinks"></div>
         </div>
+
+        <div id="solversArea"></div>
     </div>
+
+    <script>
+        function parseBR(v) { return parseFloat((v || '0').toString().replace(/\./g, '').replace(',', '.')) || 0; }
+        function fmtMoeda(n) { return "R$ " + (isNaN(n) ? 0 : n).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+
+        const questoesGabarito = [
+            {
+                id: 1,
+                titulo: "Questão 01: Margem de Contribuição Unitária (MCu)",
+                tag: "Margem Unitária",
+                notepad: `[ FORMULACAO NO BLOCO DE NOTAS ]
+Margem_de_Contribuicao_Unitaria (MCu) = Preco_de_Venda (PV) - Gastos_Variaveis_Unitarios (GVu)
+Onde: GVu = Custo_Variavel_Unitario (CVu) + Despesa_Variavel_Unitaria (DVu)`,
+                inputs: [
+                    { id: "q1_pv", label: "Preço de Venda Unitário (R$)", val: "85,00" },
+                    { id: "q1_cvu", label: "Custo Variável Unitário (R$)", val: "42,00" },
+                    { id: "q1_dvu", label: "Despesa Variável Unitária (R$)", val: "8,00" }
+                ],
+                calc: () => {
+                    const pv = parseBR(document.getElementById('q1_pv').value);
+                    const cvu = parseBR(document.getElementById('q1_cvu').value);
+                    const dvu = parseBR(document.getElementById('q1_dvu').value);
+                    const gvu = cvu + dvu;
+                    const mcu = pv - gvu;
+                    return {
+                        steps: [
+                            `Passo 1: Somar todos os gastos variáveis unitários: GVu = R$ 42,00 + R$ 8,00 = ${fmtMoeda(gvu)}`,
+                            `Passo 2: Subtrair os gastos variáveis do preço de venda: MCu = R$ 85,00 - ${fmtMoeda(gvu)}`,
+                            `Passo 3: Margem de Contribuição Unitária apurada = ${fmtMoeda(mcu)}`
+                        ],
+                        res: fmtMoeda(mcu),
+                        dica: "Destaque que as despesas de vendas (comissões/frete unitário) obrigatoriamente entram na dedução no Custeio Variável."
+                    };
+                }
+            },
+            {
+                id: 2,
+                titulo: "Questão 02: Margem de Contribuição Total (MCT)",
+                tag: "Margem Total",
+                notepad: `[ FORMULACAO NO BLOCO DE NOTAS ]
+Margem_de_Contribuicao_Total (MCT) = MCu * Quantidade_Vendida (Q)`,
+                inputs: [
+                    { id: "q2_mcu", label: "Margem de Contribuição Unitária (R$)", val: "25,00" },
+                    { id: "q2_q", label: "Quantidade Vendida (un)", val: "3.200" }
+                ],
+                calc: () => {
+                    const mcu = parseBR(document.getElementById('q2_mcu').value);
+                    const q = parseBR(document.getElementById('q2_q').value);
+                    const mct = mcu * q;
+                    return {
+                        steps: [
+                            `Passo 1: Identificar a quantidade faturada e a margem unitária do produto: Q = ${q.toLocaleString('pt-BR')} un e MCu = ${fmtMoeda(mcu)}`,
+                            `Passo 2: Multiplicar a margem unitária pelo volume: MCT = ${fmtMoeda(mcu)} * ${q.toLocaleString('pt-BR')}`,
+                            `Passo 3: Montante total de contribuição gerado = ${fmtMoeda(mct)}`
+                        ],
+                        res: fmtMoeda(mct),
+                        dica: "Esse montante representa exatamente os recursos líquidos disponíveis para cobrir a folha de pagamento, aluguéis e amortizar despesas fixas."
+                    };
+                }
+            },
+            {
+                id: 3,
+                titulo: "Questão 03: Índice de Margem de Contribuição (IMC)",
+                tag: "Índice Percentual",
+                notepad: `[ FORMULACAO NO BLOCO DE NOTAS ]
+Indice_de_Margem_de_Contribuicao (IMC) = MCu / Preco_de_Venda (PV)
+IMC_Percentual = (MCu / PV) * 100`,
+                inputs: [
+                    { id: "q3_pv", label: "Preço de Venda Unitário (R$)", val: "150,00" },
+                    { id: "q3_gvu", label: "Gastos Variáveis Unitários (R$)", val: "90,00" }
+                ],
+                calc: () => {
+                    const pv = parseBR(document.getElementById('q3_pv').value);
+                    const gvu = parseBR(document.getElementById('q3_gvu').value);
+                    const mcu = pv - gvu;
+                    const imc = (mcu / (pv || 1)) * 100;
+                    return {
+                        steps: [
+                            `Passo 1: Apurar a margem em reais: MCu = R$ 150,00 - R$ 90,00 = ${fmtMoeda(mcu)}`,
+                            `Passo 2: Dividir a MCu pelo Preço de Venda: IMC = ${fmtMoeda(mcu)} / ${fmtMoeda(pv)} = ${(mcu/(pv||1)).toFixed(4)}`,
+                            `Passo 3: Converter para formato percentual: IMC = ${imc.toFixed(2)}%`
+                        ],
+                        res: `${imc.toFixed(1)}%`,
+                        dica: "Um IMC de 40% significa que a cada R$ 100,00 faturados pela empresa, sobram limpos R$ 40,00 para amortizar os custos fixos."
+                    };
+                }
+            },
+            {
+                id: 4,
+                titulo: "Questão 04: Demonstração do Resultado no Custeio Variável",
+                tag: "DRE Gerencial",
+                notepad: `[ FORMULACAO NO BLOCO DE NOTAS ]
+RECEITA_BRUTA = R$ 200.000,00
+(-) Custos Variaveis = R$ 90.000,00
+(-) Despesas Variaveis = R$ 20.000,00
+(=) MARGEM DE CONTRIBUICAO TOTAL = R$ 90.000,00
+(-) Custos Fixos = R$ 50.000,00
+(-) Despesas Fixas = R$ 15.000,00
+(=) LUCRO OPERACIONAL LIQUIDO = MCT - Gastos_Fixos`,
+                inputs: [
+                    { id: "q4_rec", label: "Receita Bruta (R$)", val: "200.000,00" },
+                    { id: "q4_cv", label: "Custos Variáveis (R$)", val: "90.000,00" },
+                    { id: "q4_dv", label: "Despesas Variáveis (R$)", val: "20.000,00" },
+                    { id: "q4_cf", label: "Custos Fixos (R$)", val: "50.000,00" },
+                    { id: "q4_df", label: "Despesas Fixas (R$)", val: "15.000,00" }
+                ],
+                calc: () => {
+                    const rec = parseBR(document.getElementById('q4_rec').value);
+                    const cv = parseBR(document.getElementById('q4_cv').value);
+                    const dv = parseBR(document.getElementById('q4_dv').value);
+                    const cf = parseBR(document.getElementById('q4_cf').value);
+                    const df = parseBR(document.getElementById('q4_df').value);
+
+                    const mct = rec - cv - dv;
+                    const lucro = mct - cf - df;
+                    return {
+                        steps: [
+                            `Passo 1: Apurar a Margem de Contribuição Total: MCT = ${fmtMoeda(rec)} - ${fmtMoeda(cv)} - ${fmtMoeda(dv)} = ${fmtMoeda(mct)}`,
+                            `Passo 2: Somar os gastos fixos operacionais do mês: Gastos Fixos = ${fmtMoeda(cf)} + ${fmtMoeda(df)} = ${fmtMoeda(cf + df)}`,
+                            `Passo 3: Apurar o Lucro Operacional: Lucro = ${fmtMoeda(mct)} - ${fmtMoeda(cf + df)} = ${fmtMoeda(lucro)}`
+                        ],
+                        res: fmtMoeda(lucro),
+                        dica: "Observe a transparência: os gastos fixos são deduzidos em bloco, sem nenhuma manipulação de rateio fabril."
+                    };
+                }
+            },
+            {
+                id: 5,
+                titulo: "Questão 05: Impacto da Variação de Estoques no Lucro",
+                tag: "Absorção vs Variável",
+                notepad: `[ FORMULACAO NO BLOCO DE NOTAS ]
+Diferenca_no_Lucro = Lucro_Absorcao - Lucro_Variavel
+Diferenca_no_Lucro = (Estoque_Final_unidades - Estoque_Inicial_unidades) * Custo_Fixo_Unitario_Rateado`,
+                inputs: [
+                    { id: "q5_qp", label: "Volume Produzido (un)", val: "5.000" },
+                    { id: "q5_qv", label: "Volume Vendido (un)", val: "4.000" },
+                    { id: "q5_cft", label: "Custo Fixo Total (R$)", val: "100.000,00" },
+                    { id: "q5_cfu", label: "Custo Fixo Unitário Rateado (R$)", val: "20,00" }
+                ],
+                calc: () => {
+                    const qp = parseBR(document.getElementById('q5_qp').value);
+                    const qv = parseBR(document.getElementById('q5_qv').value);
+                    const cfu = parseBR(document.getElementById('q5_cfu').value);
+                    const ef = qp - qv;
+                    const dif = ef * cfu;
+                    return {
+                        steps: [
+                            `Passo 1: Calcular as unidades estocadas que não foram vendidas: Estoque Final = ${qp.toLocaleString('pt-BR')} un - ${qv.toLocaleString('pt-BR')} un = ${ef.toLocaleString('pt-BR')} unidades`,
+                            `Passo 2: Multiplicar as unidades estocadas pela parcela de custo fixo retida: Diferença = ${ef.toLocaleString('pt-BR')} un * ${fmtMoeda(cfu)}`,
+                            `Passo 3: Lucro da Absorção é maior em: ${fmtMoeda(dif)}`
+                        ],
+                        res: fmtMoeda(dif),
+                        dica: "Na Absorção, R$ 20.000 de aluguel e salários de fábrica foram guardados no estoque no Ativo Circulante, não virando despesa do mês."
+                    };
+                }
+            },
+            {
+                id: 6,
+                titulo: "Questão 06: Decisão em Pedidos Especiais com Capacidade Ociosa",
+                tag: "Pedidos Especiais",
+                notepad: `[ FORMULACAO NO BLOCO DE NOTAS ]
+Margem_Incremental_Unitaria = Preco_Especial_Ofertado - Gastos_Variaveis_Unitarios
+Lucro_Incremental_Adicional = Margem_Incremental_Unitaria * Quantidade_do_Pedido_Especial`,
+                inputs: [
+                    { id: "q6_pe", label: "Preço Especial Ofertado (R$)", val: "70,00" },
+                    { id: "q6_gvu", label: "Gastos Variáveis Incrementais (R$)", val: "55,00" },
+                    { id: "q6_qe", label: "Quantidade do Pedido Especial (un)", val: "1.500" }
+                ],
+                calc: () => {
+                    const pe = parseBR(document.getElementById('q6_pe').value);
+                    const gvu = parseBR(document.getElementById('q6_gvu').value);
+                    const qe = parseBR(document.getElementById('q6_qe').value);
+                    const mcu = pe - gvu;
+                    const extra = mcu * qe;
+                    return {
+                        steps: [
+                            `Passo 1: Calcular a margem unitária do pedido: MCu Extra = R$ 70,00 - R$ 55,00 = ${fmtMoeda(mcu)} por camisa`,
+                            `Passo 2: Multiplicar pelo volume da encomenda: Lucro Adicional = ${fmtMoeda(mcu)} * ${qe.toLocaleString('pt-BR')} un`,
+                            `Passo 3: Lucro Incremental gerado no período = ${fmtMoeda(extra)}`
+                        ],
+                        res: fmtMoeda(extra),
+                        dica: "Como os custos fixos já estão pagos pelo mercado regular e há ociosidade, os R$ 22.500 vão integralmente para o lucro final."
+                    };
+                }
+            },
+            {
+                id: 7,
+                titulo: "Questão 07: Otimização sob Restrição de Capacidade (Gargalo)",
+                tag: "Gargalo Produtivo",
+                notepad: `[ FORMULACAO NO BLOCO DE NOTAS ]
+Margem_por_Hora_Gargalo = Margem_de_Contribuicao_Unitaria (MCu) / Tempo_no_Gargalo (h)
+Regra: Priorizar o produto com maior geracao de caixa por hora de maquina!`,
+                inputs: [
+                    { id: "q7_mcy", label: "MCu do Produto Y (R$)", val: "35,00" },
+                    { id: "q7_hy", label: "Horas de Gargalo por unidade de Y (h)", val: "1,0" }
+                ],
+                calc: () => {
+                    const mcy = parseBR(document.getElementById('q7_mcy').value);
+                    const hy = parseBR(document.getElementById('q7_hy').value) || 1;
+                    const mch_y = mcy / hy;
+                    return {
+                        steps: [
+                            `Passo 1: Calcular MC/h do Produto X: R$ 60,00 ÷ 3,0h = R$ 20,00 por hora de torno`,
+                            `Passo 2: Calcular MC/h do Produto Y: ${fmtMoeda(mcy)} ÷ ${hy}h = ${fmtMoeda(mch_y)} por hora de torno`,
+                            `Passo 3: Como R$ 35,00/h > R$ 20,00/h, o Produto Y é o prioritário e sua margem no gargalo é = ${fmtMoeda(mch_y)} / h`
+                        ],
+                        res: `${fmtMoeda(mch_y)} / h`,
+                        dica: "Excelente exercício para quebrar o mito de que o produto com maior margem unitária nominal em reais é sempre o melhor."
+                    };
+                }
+            },
+            {
+                id: 8,
+                titulo: "Questão 08: Sensibilidade Volume-Lucro (Vendas Extras)",
+                tag: "Sensibilidade",
+                notepad: `[ FORMULACAO NO BLOCO DE NOTAS ]
+Acrescimo_no_Lucro_Liquido = Unidades_Adicionais_Vendidas * MCu
+(Premissa: Estrutura fixa ja 100% amortizada)`,
+                inputs: [
+                    { id: "q8_mcu", label: "Margem de Contribuição Unitária (R$)", val: "45,00" },
+                    { id: "q8_qext", label: "Unidades Extras Vendidas (un)", val: "600" }
+                ],
+                calc: () => {
+                    const mcu = parseBR(document.getElementById('q8_mcu').value);
+                    const qext = parseBR(document.getElementById('q8_qext').value);
+                    const lucroExtra = mcu * qext;
+                    return {
+                        steps: [
+                            `Passo 1: Identificar que os custos fixos permanecem constantes (não sobem com o volume extra)`,
+                            `Passo 2: Multiplicar a quantidade vendida além do equilíbrio pela margem unitária: ${qext.toLocaleString('pt-BR')} un * ${fmtMoeda(mcu)}`,
+                            `Passo 3: Aumento direto no lucro líquido = ${fmtMoeda(lucroExtra)}`
+                        ],
+                        res: fmtMoeda(lucroExtra),
+                        dica: "Demonstra o poder preditivo do Custeio Variável para negociar metas comerciais no final de mês."
+                    };
+                }
+            },
+            {
+                id: 9,
+                titulo: "Questão 09: Margem de Contribuição Média Ponderada do Mix",
+                tag: "Mix Ponderado",
+                notepad: `[ FORMULACAO NO BLOCO DE NOTAS ]
+MC_Media_Ponderada = (MCu_Home * %_Mix_Home) + (MCu_Corp * %_Mix_Corp)`,
+                inputs: [
+                    { id: "q9_mcH", label: "MCu Linha Home (R$)", val: "30,00" },
+                    { id: "q9_mixH", label: "% Mix Home", val: "60" },
+                    { id: "q9_mcC", label: "MCu Linha Corp (R$)", val: "55,00" },
+                    { id: "q9_mixC", label: "% Mix Corp", val: "40" }
+                ],
+                calc: () => {
+                    const mcH = parseBR(document.getElementById('q9_mcH').value);
+                    const mixH = parseBR(document.getElementById('q9_mixH').value) / 100;
+                    const mcC = parseBR(document.getElementById('q9_mcC').value);
+                    const mixC = parseBR(document.getElementById('q9_mixC').value) / 100;
+
+                    const mcPond = (mcH * mixH) + (mcC * mixC);
+                    return {
+                        steps: [
+                            `Passo 1: Ponderar a contribuição da Linha Home: ${fmtMoeda(mcH)} * 0,60 = ${fmtMoeda(mcH * mixH)}`,
+                            `Passo 2: Ponderar a contribuição da Linha Corporativa: ${fmtMoeda(mcC)} * 0,40 = ${fmtMoeda(mcC * mixC)}`,
+                            `Passo 3: Somar as duas parcelas ponderadas: ${fmtMoeda(mcH * mixH)} + ${fmtMoeda(mcC * mixC)} = ${fmtMoeda(mcPond)}`
+                        ],
+                        res: `${fmtMoeda(mcPond)} / un`,
+                        dica: "A margem ponderada de R$ 40,00 é o valor médio que cada computador vendido deixa na empresa considerando o mix atual."
+                    };
+                }
+            },
+            {
+                id: 10,
+                titulo: "Questão 10: Análise de Descontinuação de Linha de Produtos",
+                tag: "Dilema Gerencial",
+                notepad: `[ FORMULACAO NO BLOCO DE NOTAS ]
+Margem_de_Contribuicao_Perdida = Receita_da_Linha - Gastos_Variaveis_da_Linha
+Economia_Real_de_Custos = Custos_Fixos_Especificos_Eliminaveis
+Impacto_Liquido_no_Resultado = Economia_Real_de_Custos - Margem_de_Contribuicao_Perdida`,
+                inputs: [
+                    { id: "q10_mc", label: "Margem de Contribuição Perdida (R$)", val: "35.000,00" },
+                    { id: "q10_cfe", label: "Custos Fixos Elimináveis (R$)", val: "15.000,00" }
+                ],
+                calc: () => {
+                    const mc = parseBR(document.getElementById('q10_mc').value);
+                    const cfe = parseBR(document.getElementById('q10_cfe').value);
+                    const prejuAdic = mc - cfe;
+                    return {
+                        steps: [
+                            `Passo 1: Identificar o valor líquido que a linha deixava para a empresa: MC = ${fmtMoeda(mc)}`,
+                            `Passo 2: Subtrair os custos fixos que a empresa realmente deixará de pagar: ${fmtMoeda(cfe)}`,
+                            `Passo 3: Impacto adverso no resultado global: A empresa perderá R$ 35.000 de margem e só economizará R$ 15.000, gerando um prejuízo adicional de ${fmtMoeda(prejuAdic)}`
+                        ],
+                        res: fmtMoeda(prejuAdic),
+                        dica: "Os outros R$ 30.000 de custos fixos continuarão existindo e serão jogados sobre as outras linhas. Jamais elimine linha com MC positiva!"
+                    };
+                }
+            }
+        ];
+
+        function renderPainel() {
+            const nav = document.getElementById('navLinks');
+            const container = document.getElementById('solversArea');
+            nav.innerHTML = '';
+            container.innerHTML = '';
+
+            questoesGabarito.forEach(q => {
+                nav.innerHTML += `<a href="#solver-${q.id}" class="nav-btn">Q${q.id}</a>`;
+
+                const inputsHtml = q.inputs.map(inp => `
+                    <div class="form-group">
+                        <label class="form-label">${inp.label}</label>
+                        <input type="text" id="${inp.id}" class="form-control" value="${inp.val}" oninput="resolver(${q.id})">
+                    </div>
+                `).join('');
+
+                container.innerHTML += `
+                    <div class="solver-card" id="solver-${q.id}">
+                        <div class="solver-header">
+                            <div>
+                                <h2 class="card-title">${q.titulo}</h2>
+                            </div>
+                            <span class="card-tag">${q.tag}</span>
+                        </div>
+                        <div class="notepad-box">${q.notepad}</div>
+                        <div class="inputs-grid">${inputsHtml}</div>
+                        <div class="solution-box">
+                            <strong style="font-size:0.85rem; color:var(--primary); text-transform:uppercase; display:block; margin-bottom:0.5rem;">Resolução Passo a Passo:</strong>
+                            <ul class="step-list" id="steps-${q.id}"></ul>
+                            <div class="res-final">
+                                <div>
+                                    <span style="font-size:0.75rem; text-transform:uppercase; color:var(--secondary-light);">Resposta Oficial</span>
+                                    <div class="res-val" id="res-${q.id}">-</div>
+                                </div>
+                                <span style="font-size:0.8rem; opacity:0.8;">Cálculo Dinâmico</span>
+                            </div>
+                            <div class="dica-box" id="dica-${q.id}"></div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            questoesGabarito.forEach(q => resolver(q.id));
+        }
+
+        function resolver(id) {
+            const q = questoesGabarito.find(item => item.id === id);
+            if (!q) return;
+            const r = q.calc();
+            document.getElementById(`steps-${id}`).innerHTML = r.steps.map(s => `<li class="step-item">• ${s}</li>`).join('');
+            document.getElementById(`res-${id}`).innerText = r.res;
+            document.getElementById(`dica-${id}`).innerHTML = `<strong>Orientação Pedagógica:</strong> ${r.dica}`;
+        }
+
+        document.addEventListener('DOMContentLoaded', renderPainel);
+    </script>
 </body>
 </html>

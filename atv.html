@@ -3,27 +3,529 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Laboratório | Custeio Variavel e Margem de Contribuicao</title>
+    <title>Atividade Prática: Custeio Variável e Margem de Contribuição | CEST Anil</title>
     <style>
-        :root { --primary: #002060; --bg: #F4F7FA; --surface: #FFF; --border: #E2E8F0; }
-        body { font-family: system-ui, sans-serif; background: var(--bg); margin: 0; padding: 2rem; color: #0F172A; }
-        .container { max-width: 900px; margin: 0 auto; }
-        header { background: var(--primary); color: #FFF; padding: 2rem; border-radius: 12px; margin-bottom: 2rem; }
-        .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 2rem; }
-        .btn { display: inline-block; margin-top: 1.5rem; padding: 0.75rem 1.5rem; background: var(--primary); color: #FFF; text-decoration: none; border-radius: 6px; font-weight: 700; }
+        :root {
+            --primary: #002060;
+            --primary-dark: #001138;
+            --secondary: #0080FF;
+            --secondary-light: #E6F2FF;
+            --success: #10B981;
+            --success-light: #D1FAE5;
+            --danger: #EF4444;
+            --danger-light: #FEE2E2;
+            --background: #F4F7FA;
+            --surface: #FFFFFF;
+            --text-primary: #0F172A;
+            --text-secondary: #475569;
+            --border: #CBD5E1;
+            --radius-md: 10px;
+            --font-mono: 'SFMono-Regular', Consolas, 'Courier New', monospace;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: system-ui, -apple-system, sans-serif; background: var(--background); color: var(--text-primary); line-height: 1.5; }
+        .container { max-width: 1000px; margin: 0 auto; padding: 1.5rem; }
+
+        header.screen-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: #FFFFFF; padding: 2rem; border-radius: var(--radius-md);
+            margin-bottom: 1.5rem;
+        }
+        .header-title { font-size: 1.8rem; font-weight: 800; margin-bottom: 0.35rem; }
+        .header-sub { font-size: 0.95rem; opacity: 0.9; }
+
+        .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1.25rem 1.5rem; margin-bottom: 1.25rem; }
+        .card-title { font-size: 1.15rem; font-weight: 800; color: var(--primary); margin-bottom: 0.75rem; border-bottom: 2px solid var(--secondary-light); padding-bottom: 0.4rem; }
+
+        .ident-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 1rem; }
+        .form-group { display: flex; flex-direction: column; gap: 0.25rem; }
+        .form-label { font-size: 0.75rem; font-weight: 700; color: var(--primary); text-transform: uppercase; }
+        .form-control { padding: 0.6rem 0.8rem; border: 1.5px solid var(--border); border-radius: 6px; font-size: 0.9rem; }
+
+        .notepad-box {
+            background: #2D3748;
+            color: #E2E8F0;
+            font-family: var(--font-mono);
+            font-size: 0.82rem;
+            line-height: 1.45;
+            padding: 1rem;
+            border-radius: 6px;
+            white-space: pre-wrap;
+            border-left: 4px solid var(--secondary);
+            margin-top: 0.5rem;
+        }
+
+        .questions-grid { display: grid; grid-template-columns: 1fr; gap: 1rem; margin-bottom: 1.5rem; }
+        
+        .question-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-left: 4px solid var(--secondary);
+            border-radius: 8px;
+            padding: 1.25rem;
+            page-break-inside: avoid;
+            break-inside: avoid;
+        }
+        
+        .q-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
+        .q-num { font-size: 1rem; font-weight: 800; color: var(--primary); }
+        .q-tag { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; background: var(--secondary-light); color: var(--primary); padding: 3px 8px; border-radius: 4px; }
+        .q-text { font-size: 0.92rem; color: var(--text-primary); margin-bottom: 0.75rem; }
+        
+        .q-data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+            margin-bottom: 0.75rem;
+            background: #F8FAFC;
+            border: 1px dashed var(--border);
+        }
+        .q-data-table td { padding: 6px 10px; border: 1px solid var(--border); }
+        .q-data-table td.label { font-weight: 700; color: var(--primary); width: 60%; }
+        .q-data-table td.val { font-family: var(--font-mono); font-weight: 700; text-align: right; }
+
+        .calc-area {
+            border: 1px dashed #CBD5E1;
+            background: #FAFAFA;
+            border-radius: 4px;
+            min-height: 70px;
+            padding: 8px;
+            font-size: 0.75rem;
+            color: #94A3B8;
+            margin-bottom: 0.75rem;
+        }
+
+        .interactive-row { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+        .input-group { display: inline-flex; align-items: center; gap: 6px; }
+        .input-ans {
+            width: 150px;
+            padding: 0.5rem 0.75rem;
+            font-family: var(--font-mono);
+            font-weight: 700;
+            font-size: 0.95rem;
+            border: 1.5px solid var(--border);
+            border-radius: 4px;
+            text-align: right;
+        }
+
+        .btn { padding: 0.55rem 1.1rem; font-size: 0.85rem; font-weight: 700; border-radius: 6px; cursor: pointer; border: none; transition: 0.2s; }
+        .btn-check { background: var(--surface); color: var(--primary); border: 1.5px solid var(--border); }
+        .btn-check:hover { background: var(--secondary-light); border-color: var(--secondary); }
+        .btn-primary { background: var(--primary); color: #FFF; }
+        .btn-primary:hover { background: var(--secondary); }
+
+        .feedback-badge { display: none; font-size: 0.8rem; font-weight: 700; padding: 4px 10px; border-radius: 4px; }
+        .feedback-badge.correct { display: inline-block; background: var(--success-light); color: #065F46; }
+        .feedback-badge.wrong { display: inline-block; background: var(--danger-light); color: #991B1B; }
+
+        .action-dock {
+            background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md);
+            padding: 1.25rem 2rem; display: flex; justify-content: space-between; align-items: center;
+            position: sticky; bottom: 1rem; z-index: 100; box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+
+        /* FORMATO EXCLUSIVO PARA IMPRESSÃO EM SALA */
+        .print-header { display: none; }
+
+        @media print {
+            @page { size: A4; margin: 12mm 15mm; }
+            body { background: #FFF; color: #000; font-size: 9.5pt; }
+            .container { max-width: 100%; padding: 0; margin: 0; }
+            
+            .screen-header, .action-dock, .btn-check, .feedback-badge { display: none !important; }
+            
+            .print-header {
+                display: block !important;
+                border-bottom: 2px solid #000;
+                padding-bottom: 8px;
+                margin-bottom: 12px;
+            }
+            .print-header h2 { font-size: 13pt; margin-bottom: 2px; color: #000; text-transform: uppercase; }
+            .print-header p { font-size: 9pt; margin: 1px 0; color: #333; }
+            
+            .card { border: 1px solid #999; border-radius: 0; padding: 8px 12px; margin-bottom: 10px; }
+            .card-title { font-size: 10.5pt; border-bottom: 1px solid #999; padding-bottom: 2px; margin-bottom: 6px; }
+            
+            .ident-grid { grid-template-columns: 3fr 1.5fr 1fr; gap: 8px; }
+            .form-control { border: 1px solid #666; border-radius: 0; padding: 4px; font-size: 9pt; background: #FFF; }
+            
+            .notepad-box { background: #EEE; color: #000; border-left: 3px solid #000; font-size: 8pt; padding: 6px; }
+            
+            .questions-grid { display: block; }
+            .question-card {
+                border: 1px solid #777 !important;
+                border-left: 4px solid #000 !important;
+                border-radius: 0;
+                padding: 8px 10px;
+                margin-bottom: 10px;
+                page-break-inside: avoid;
+                break-inside: avoid;
+            }
+            .q-num { font-size: 10pt; color: #000; }
+            .q-tag { border: 1px solid #999; background: #FFF; color: #000; font-size: 7pt; }
+            .q-text { font-size: 9pt; margin-bottom: 6px; line-height: 1.35; color: #000; }
+            
+            .q-data-table { background: #FFF; border: 1px solid #999; font-size: 8.5pt; margin-bottom: 6px; }
+            .q-data-table td { padding: 3px 6px; border: 1px solid #CCC; }
+            .q-data-table td.label { color: #000; }
+            
+            .calc-area {
+                border: 1px dashed #666;
+                background: #FFF;
+                min-height: 48px;
+                margin-bottom: 6px;
+                padding: 4px;
+                font-size: 7.5pt;
+                color: #555;
+            }
+            
+            .interactive-row { justify-content: flex-end; }
+            .input-ans { border: 1px solid #000; border-radius: 0; width: 130px; padding: 3px 5px; font-size: 9pt; }
+        }
     </style>
 </head>
 <body>
+
+    <!-- CABEÇALHO OFICIAL DE IMPRESSÃO -->
+    <div class="print-header">
+        <h2>CEST - Centro Universitário Santa Terezinha</h2>
+        <p><strong>Curso de Administração</strong> • Disciplina: Gestão de Custos • Prof. Msc. Philipe Sampaio Lima</p>
+        <p><strong>Avaliação Prática em Sala: Custeio Variável e Análise da Margem de Contribuição (10 Questões)</strong></p>
+    </div>
+
     <div class="container">
-        <header>
-            <h1 style="margin:0 0 0.5rem 0;">Laboratório de Atividades Práticas</h1>
-            <p style="margin:0; opacity:0.9;">Custeio Variavel e Margem de Contribuicao • Prof. Msc. Philipe Sampaio Lima</p>
+        <!-- CABEÇALHO DE TELA -->
+        <header class="screen-header">
+            <div class="header-title">Laboratório de Fixação: Custeio Variável</div>
+            <div class="header-sub">Lista Prática de 10 Questões Fixas • Administração CEST Anil • Prof. Msc. Philipe Sampaio Lima</div>
         </header>
+
+        <!-- IDENTIFICAÇÃO DO ALUNO -->
         <div class="card">
-            <h2 style="color:var(--primary); margin-top:0;">Módulo de Exercícios Parametrizados</h2>
-            <p style="color:#475569;">Placeholder pronto para receber o gerador de questões, validação de respostas e exportador PDF oficial.</p>
-            <a href="index.html" class="btn">&larr; Retornar ao Menu da Aula</a>
+            <h2 class="card-title">1. Identificação do Discente</h2>
+            <div class="ident-grid">
+                <div class="form-group">
+                    <label class="form-label" for="alunoNome">Nome Completo do Aluno</label>
+                    <input type="text" id="alunoNome" class="form-control" placeholder="Preencha seu nome legível...">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="alunoMat">Matrícula / Turma</label>
+                    <input type="text" id="alunoMat" class="form-control" placeholder="Ex: ADM-2026.2">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="alunoData">Data de Entrega</label>
+                    <input type="text" id="alunoData" class="form-control" value="23/10/2026">
+                </div>
+            </div>
+        </div>
+
+        <!-- FORMULÁRIO DO BLOCO DE NOTAS -->
+        <div class="card">
+            <h2 class="card-title">2. Formulário Oficial de Referência</h2>
+            <div class="notepad-box">[ FORMULAS NO BLOCO DE NOTAS PARA RESOLUCAO ]
+MCu = Preco_de_Venda (PV) - Gastos_Variaveis_Unitarios (GVu)
+GVu = Custo_Variavel_Unitario (CVu) + Despesa_Variavel_Unitaria (DVu)
+MCT = MCu * Quantidade_Vendida (Q)
+Indice_MC (IMC) = MCu / Preco_de_Venda = MCT / Receita_Total
+Lucro_Operacional = MCT - Custos_Fixos_Totais - Despesas_Fixas_Totais
+Diferenca_de_Lucro (Absorcao - Variavel) = (Estoque_Final - Estoque_Inicial) * Custo_Fixo_Unitario
+Margem_no_Gargalo = MCu / Tempo_no_Recurso_Restritivo</div>
+        </div>
+
+        <!-- CADERNO DE 10 QUESTÕES FIXAS -->
+        <div class="questions-grid">
+            
+            <!-- Questão 1 -->
+            <div class="question-card" id="qcard-1">
+                <div class="q-header">
+                    <span class="q-num">Questão 01</span>
+                    <span class="q-tag">Margem Unitária</span>
+                </div>
+                <p class="q-text">A Indústria Maranhense de Bebidas vende latas de suco natural. No encerramento do lote, foram levantados os valores unitários abaixo. Calcule a <strong>Margem de Contribuição Unitária (MCu)</strong>.</p>
+                <table class="q-data-table">
+                    <tr><td class="label">Preço de Venda Bruto Unitário</td><td class="val">R$ 85,00</td></tr>
+                    <tr><td class="label">Custo Variável Unitário (Insumos + Embalagem)</td><td class="val">R$ 42,00</td></tr>
+                    <tr><td class="label">Despesas Variáveis de Vendas (Comissões + Frete Unitário)</td><td class="val">R$ 8,00</td></tr>
+                </table>
+                <div class="calc-area">Espaço para memória de cálculo do discente:</div>
+                <div class="interactive-row">
+                    <span class="feedback-badge" id="feed-1"></span>
+                    <div class="input-group">
+                        <label style="font-size:0.85rem; font-weight:700;">Resposta Final: R$</label>
+                        <input type="text" id="ans-1" class="input-ans" placeholder="0,00">
+                        <button class="btn btn-check" onclick="validarQuestao(1, 35.00)">Conferir</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Questão 2 -->
+            <div class="question-card" id="qcard-2">
+                <div class="q-header">
+                    <span class="q-num">Questão 02</span>
+                    <span class="q-tag">Margem Total</span>
+                </div>
+                <p class="q-text">Uma distribuidora de calçados opera com uma Margem de Contribuição Unitária de R$ 25,00 por par de sapatos. No mês de setembro, foram faturadas e entregues 3.200 unidades. Determine o montante total de <strong>Margem de Contribuição Total (MCT)</strong> gerado para a cobertura dos gastos fixos.</p>
+                <table class="q-data-table">
+                    <tr><td class="label">Margem de Contribuição Unitária (MCu)</td><td class="val">R$ 25,00</td></tr>
+                    <tr><td class="label">Volume Efetivamente Vendido no Mês</td><td class="val">3.200 pares</td></tr>
+                </table>
+                <div class="calc-area">Espaço para memória de cálculo do discente:</div>
+                <div class="interactive-row">
+                    <span class="feedback-badge" id="feed-2"></span>
+                    <div class="input-group">
+                        <label style="font-size:0.85rem; font-weight:700;">Resposta Final: R$</label>
+                        <input type="text" id="ans-2" class="input-ans" placeholder="0,00">
+                        <button class="btn btn-check" onclick="validarQuestao(2, 80000.00)">Conferir</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Questão 3 -->
+            <div class="question-card" id="qcard-3">
+                <div class="q-header">
+                    <span class="q-num">Questão 03</span>
+                    <span class="q-tag">Índice de Margem</span>
+                </div>
+                <p class="q-text">A Fábrica Tropical produz luminárias solares que são vendidas a R$ 150,00 cada. Os gastos variáveis totais (custos e despesas) somam R$ 90,00 por unidade. Calcule o <strong>Índice de Margem de Contribuição (IMC)</strong> percentual dessa linha.</p>
+                <table class="q-data-table">
+                    <tr><td class="label">Preço de Venda Unitário (PV)</td><td class="val">R$ 150,00</td></tr>
+                    <tr><td class="label">Gastos Variáveis Unitários Totais (GVu)</td><td class="val">R$ 90,00</td></tr>
+                </table>
+                <div class="calc-area">Espaço para memória de cálculo do discente:</div>
+                <div class="interactive-row">
+                    <span class="feedback-badge" id="feed-3"></span>
+                    <div class="input-group">
+                        <label style="font-size:0.85rem; font-weight:700;">Resposta Final: %</label>
+                        <input type="text" id="ans-3" class="input-ans" placeholder="Ex: 40,0">
+                        <button class="btn btn-check" onclick="validarQuestao(3, 40.00)">Conferir</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Questão 4 -->
+            <div class="question-card" id="qcard-4">
+                <div class="q-header">
+                    <span class="q-num">Questão 04</span>
+                    <span class="q-tag">DRE Gerencial</span>
+                </div>
+                <p class="q-text">Com base nos dados contábeis consolidados de uma indústria de tintas no mês de agosto, estruture mentalmente a DRE no Custeio Variável e apure o <strong>Lucro Operacional Líquido</strong> final.</p>
+                <table class="q-data-table">
+                    <tr><td class="label">Receita Bruta Total de Vendas</td><td class="val">R$ 200.000,00</td></tr>
+                    <tr><td class="label">Custos Variáveis dos Produtos Vendidos</td><td class="val">R$ 90.000,00</td></tr>
+                    <tr><td class="label">Despesas Variáveis Comerciais</td><td class="val">R$ 20.000,00</td></tr>
+                    <tr><td class="label">Custos Fixos da Fábrica</td><td class="val">R$ 50.000,00</td></tr>
+                    <tr><td class="label">Despesas Fixas de Administração e Vendas</td><td class="val">R$ 15.000,00</td></tr>
+                </table>
+                <div class="calc-area">Espaço para memória de cálculo do discente:</div>
+                <div class="interactive-row">
+                    <span class="feedback-badge" id="feed-4"></span>
+                    <div class="input-group">
+                        <label style="font-size:0.85rem; font-weight:700;">Resposta Final: R$</label>
+                        <input type="text" id="ans-4" class="input-ans" placeholder="0,00">
+                        <button class="btn btn-check" onclick="validarQuestao(4, 25000.00)">Conferir</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Questão 5 -->
+            <div class="question-card" id="qcard-5">
+                <div class="q-header">
+                    <span class="q-num">Questão 05</span>
+                    <span class="q-tag">Impacto de Estoques</span>
+                </div>
+                <p class="q-text">Uma empresa iniciou o mês sem estoques. Produziu 5.000 unidades de seu produto e vendeu 4.000 unidades a R$ 60,00 cada. Os custos variáveis foram de R$ 20,00/un e os custos fixos totais foram de R$ 100.000,00. Sabendo que o custo fixo rateado na absorção é de R$ 20,00/un, determine qual será a <strong>diferença exata entre o Lucro Líquido apurado na Absorção e o apurado no Custeio Variável</strong> (Lucro Absorção − Lucro Variável).</p>
+                <table class="q-data-table">
+                    <tr><td class="label">Volume Produzido no Mês</td><td class="val">5.000 un</td></tr>
+                    <tr><td class="label">Volume Efetivamente Vendido</td><td class="val">4.000 un</td></tr>
+                    <tr><td class="label">Custo Fixo Total do Período</td><td class="val">R$ 100.000,00</td></tr>
+                    <tr><td class="label">Custo Fixo Rateado por Unidade Produzida</td><td class="val">R$ 20,00 / un</td></tr>
+                </table>
+                <div class="calc-area">Espaço para memória de cálculo do discente:</div>
+                <div class="interactive-row">
+                    <span class="feedback-badge" id="feed-5"></span>
+                    <div class="input-group">
+                        <label style="font-size:0.85rem; font-weight:700;">Resposta Final: R$</label>
+                        <input type="text" id="ans-5" class="input-ans" placeholder="0,00">
+                        <button class="btn btn-check" onclick="validarQuestao(5, 20000.00)">Conferir</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Questão 6 -->
+            <div class="question-card" id="qcard-6">
+                <div class="q-header">
+                    <span class="q-num">Questão 06</span>
+                    <span class="q-tag">Pedidos Especiais</span>
+                </div>
+                <p class="q-text">Uma confecção possui capacidade ociosa de 2.000 camisas/mês. Recebeu uma encomenda especial de 1.500 camisas personalizadas para um evento pelo preço fechado de R$ 70,00/un. Os gastos variáveis de fabricação são de R$ 55,00/un e não haverá nenhum custo fixo adicional. Qual será o <strong>Lucro Operacional Incremental Adicional</strong> gerado se a empresa aceitar o pedido?</p>
+                <table class="q-data-table">
+                    <tr><td class="label">Volume do Pedido Especial</td><td class="val">1.500 camisas</td></tr>
+                    <tr><td class="label">Preço Unitário Especial Proposto</td><td class="val">R$ 70,00</td></tr>
+                    <tr><td class="label">Gastos Variáveis Incrementais Unitários</td><td class="val">R$ 55,00</td></tr>
+                </table>
+                <div class="calc-area">Espaço para memória de cálculo do discente:</div>
+                <div class="interactive-row">
+                    <span class="feedback-badge" id="feed-6"></span>
+                    <div class="input-group">
+                        <label style="font-size:0.85rem; font-weight:700;">Resposta Final: R$</label>
+                        <input type="text" id="ans-6" class="input-ans" placeholder="0,00">
+                        <button class="btn btn-check" onclick="validarQuestao(6, 22500.00)">Conferir</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Questão 7 -->
+            <div class="question-card" id="qcard-7">
+                <div class="q-header">
+                    <span class="q-num">Questão 07</span>
+                    <span class="q-tag">Gargalo Operacional</span>
+                </div>
+                <p class="q-text">Uma tornearia possui um torno CNC que trabalha no limite de horas. O Produto X gera MCu de R$ 60,00 e consome 3 horas no torno. O Produto Y gera MCu de R$ 35,00 e consome apenas 1 hora no torno. Calcule a <strong>Margem de Contribuição por Hora de Gargalo do produto mais rentável (prioritário)</strong>.</p>
+                <table class="q-data-table">
+                    <tr><td class="label">Produto X: MCu / Tempo no Gargalo</td><td class="val">R$ 60,00 / 3,0 h</td></tr>
+                    <tr><td class="label">Produto Y: MCu / Tempo no Gargalo</td><td class="val">R$ 35,00 / 1,0 h</td></tr>
+                </table>
+                <div class="calc-area">Espaço para memória de cálculo do discente:</div>
+                <div class="interactive-row">
+                    <span class="feedback-badge" id="feed-7"></span>
+                    <div class="input-group">
+                        <label style="font-size:0.85rem; font-weight:700;">Resposta Final: R$ / h</label>
+                        <input type="text" id="ans-7" class="input-ans" placeholder="0,00">
+                        <button class="btn btn-check" onclick="validarQuestao(7, 35.00)">Conferir</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Questão 8 -->
+            <div class="question-card" id="qcard-8">
+                <div class="q-header">
+                    <span class="q-num">Questão 08</span>
+                    <span class="q-tag">Sensibilidade Volume-Lucro</span>
+                </div>
+                <p class="q-text">A Cerâmica São Luís vende blocos com MCu de R$ 45,00. Sabendo que toda a estrutura fixa mensal da fábrica já foi coberta no meio do mês, determine o <strong>acréscimo direto no lucro líquido operacional</strong> caso o setor comercial consiga vender 600 unidades extras no final do período.</p>
+                <table class="q-data-table">
+                    <tr><td class="label">Margem de Contribuição Unitária (MCu)</td><td class="val">R$ 45,00</td></tr>
+                    <tr><td class="label">Unidades Adicionais Vendidas Além do Ponto de Cobertura</td><td class="val">600 un</td></tr>
+                </table>
+                <div class="calc-area">Espaço para memória de cálculo do discente:</div>
+                <div class="interactive-row">
+                    <span class="feedback-badge" id="feed-8"></span>
+                    <div class="input-group">
+                        <label style="font-size:0.85rem; font-weight:700;">Resposta Final: R$</label>
+                        <input type="text" id="ans-8" class="input-ans" placeholder="0,00">
+                        <button class="btn btn-check" onclick="validarQuestao(8, 27000.00)">Conferir</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Questão 9 -->
+            <div class="question-card" id="qcard-9">
+                <div class="q-header">
+                    <span class="q-num">Questão 09</span>
+                    <span class="q-tag">Mix Ponderado</span>
+                </div>
+                <p class="q-text">Uma montadora de computadores comercializa dois modelos: Linha Home (representa 60% do mix físico com MCu de R$ 30,00) e Linha Corporativa (representa 40% do mix com MCu de R$ 55,00). Calcule a <strong>Margem de Contribuição Média Ponderada</strong> por unidade vendida da carteira.</p>
+                <table class="q-data-table">
+                    <tr><td class="label">Linha Home: Participação no Mix / MCu</td><td class="val">60% / R$ 30,00</td></tr>
+                    <tr><td class="label">Linha Corporativa: Participação no Mix / MCu</td><td class="val">40% / R$ 55,00</td></tr>
+                </table>
+                <div class="calc-area">Espaço para memória de cálculo do discente:</div>
+                <div class="interactive-row">
+                    <span class="feedback-badge" id="feed-9"></span>
+                    <div class="input-group">
+                        <label style="font-size:0.85rem; font-weight:700;">Resposta Final: R$</label>
+                        <input type="text" id="ans-9" class="input-ans" placeholder="0,00">
+                        <button class="btn btn-check" onclick="validarQuestao(9, 40.00)">Conferir</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Questão 10 -->
+            <div class="question-card" id="qcard-10">
+                <div class="q-header">
+                    <span class="q-num">Questão 10</span>
+                    <span class="q-tag">Descontinuação de Linha</span>
+                </div>
+                <p class="q-text">A Linha de Produtos Ômega gera Receita de R$ 120.000,00 e Gastos Variáveis de R$ 85.000,00 (MC = R$ 35.000,00). Se a empresa descontinuar a Linha Ômega, conseguirá eliminar apenas R$ 15.000,00 de custos fixos específicos; os outros R$ 30.000,00 de custos fixos são da fábrica e continuarão existindo. Qual será o <strong>impacto líquido negativo (prejuízo adicional)</strong> no resultado global da empresa se a linha for eliminada?</p>
+                <table class="q-data-table">
+                    <tr><td class="label">Margem de Contribuição Perdida da Linha Ômega</td><td class="val">R$ 35.000,00</td></tr>
+                    <tr><td class="label">Custos Fixos Específicos que Serão Economizados</td><td class="val">R$ 15.000,00</td></tr>
+                </table>
+                <div class="calc-area">Espaço para memória de cálculo do discente:</div>
+                <div class="interactive-row">
+                    <span class="feedback-badge" id="feed-10"></span>
+                    <div class="input-group">
+                        <label style="font-size:0.85rem; font-weight:700;">Resposta Final: R$</label>
+                        <input type="text" id="ans-10" class="input-ans" placeholder="0,00">
+                        <button class="btn btn-check" onclick="validarQuestao(10, 20000.00)">Conferir</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- BARRA FLUTUANTE DE AÇÕES -->
+        <div class="action-dock">
+            <div>
+                <span style="font-size:0.75rem; font-weight:700; text-transform:uppercase; color:#64748B;">Desempenho</span>
+                <div style="font-size:1.6rem; font-weight:800; color:var(--primary);"><span id="lblPlacar">0</span> / 10</div>
+            </div>
+            <div style="display:flex; gap:0.75rem;">
+                <button class="btn btn-check" onclick="verificarTodas()">Verificar Todas</button>
+                <button class="btn btn-primary" onclick="window.print()">Imprimir / Gerar PDF Oficial</button>
+            </div>
         </div>
     </div>
+
+    <script>
+        const corretas = {
+            1: 35.00,
+            2: 80000.00,
+            3: 40.00,
+            4: 25000.00,
+            5: 20000.00,
+            6: 22500.00,
+            7: 35.00,
+            8: 27000.00,
+            9: 40.00,
+            10: 20000.00
+        };
+
+        const acertos = {};
+
+        function parseBR(v) { return parseFloat((v || '0').toString().replace(/\./g, '').replace(',', '.')) || 0; }
+
+        function validarQuestao(id, valorEsperado) {
+            const input = document.getElementById(`ans-${id}`);
+            const feed = document.getElementById(`feed-${id}`);
+            const digitado = parseBR(input.value);
+
+            const dif = Math.abs(digitado - valorEsperado);
+            const margem = Math.max(0.1, valorEsperado * 0.01);
+
+            if (input.value.trim() !== "" && dif <= margem) {
+                feed.className = "feedback-badge correct";
+                feed.innerText = "CORRETO";
+                acertos[id] = true;
+            } else {
+                feed.className = "feedback-badge wrong";
+                feed.innerText = "REVISE O CÁLCULO";
+                acertos[id] = false;
+            }
+            atualizarPlacar();
+        }
+
+        function verificarTodas() {
+            for (let i = 1; i <= 10; i++) {
+                validarQuestao(i, corretas[i]);
+            }
+        }
+
+        function atualizarPlacar() {
+            const totalAcertos = Object.values(acertos).filter(v => v === true).length;
+            document.getElementById('lblPlacar').innerText = totalAcertos;
+        }
+    </script>
 </body>
 </html>

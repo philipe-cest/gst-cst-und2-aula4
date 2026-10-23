@@ -3,114 +3,229 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Custeio Variavel e Margem de Contribuicao | Gestão de Custos CEST</title>
+    <title>Aula 04: Custeio Variável e Margem de Contribuição | Gestão de Custos CEST</title>
     <style>
-        :root { --primary: #002060; --secondary: #0080FF; --bg: #F4F7FA; --surface: #FFF; --border: #E2E8F0; }
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: system-ui, sans-serif; background: var(--bg); margin: 0; padding: 2rem; color: #0F172A; }
-        .container { max-width: 1100px; margin: 0 auto; }
-        header { background: var(--primary); color: #FFF; padding: 2rem; border-radius: 12px; margin-bottom: 2rem; }
-        .links { display: flex; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap; }
-        .btn { display: inline-block; padding: 0.6rem 1.2rem; background: var(--primary); color: #FFF; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 0.9rem; }
-        .btn-green { background: #10B981; }
+        :root {
+            --primary: #002060;
+            --primary-dark: #001138;
+            --secondary: #0080FF;
+            --secondary-light: #E6F2FF;
+            --success: #10B981;
+            --background: #F4F7FA;
+            --surface: #FFFFFF;
+            --text-primary: #0F172A;
+            --text-secondary: #475569;
+            --border: #CBD5E1;
+            --radius-md: 12px;
+            --shadow-sm: 0 1px 3px rgba(0, 32, 96, 0.05);
+            --shadow-md: 0 4px 20px -2px rgba(0, 32, 96, 0.08);
+            --font-mono: 'SFMono-Regular', Consolas, 'Courier New', monospace;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: system-ui, -apple-system, sans-serif; background: var(--background); color: var(--text-primary); line-height: 1.6; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 2rem 1.5rem; }
+
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: #FFFFFF;
+            padding: 2.5rem 2rem;
+            border-radius: var(--radius-md);
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-md);
+        }
+
+        .tag-class {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.15);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.75rem;
+        }
+
+        .header-title { font-size: clamp(1.8rem, 3vw, 2.4rem); font-weight: 800; line-height: 1.2; margin-bottom: 0.5rem; }
+        .header-desc { font-size: 1rem; opacity: 0.9; max-width: 850px; margin-bottom: 1.5rem; }
+
+        .header-meta {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1rem;
+            background: rgba(255, 255, 255, 0.08);
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+        .meta-item span { font-size: 0.75rem; text-transform: uppercase; opacity: 0.8; display: block; }
+        .meta-item strong { font-size: 0.95rem; color: #FFF; }
+
+        .actions { display: flex; gap: 1rem; margin-bottom: 2.5rem; flex-wrap: wrap; }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 0.8rem 1.5rem;
+            font-size: 0.95rem;
+            font-weight: 700;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: transform 0.2s, background-color 0.2s;
+            cursor: pointer;
+        }
+        .btn-green { background: #10B981; color: #FFF; }
+        .btn-green:hover { background: #059669; transform: translateY(-2px); }
+        .btn-blue { background: var(--secondary); color: #FFF; }
+        .btn-blue:hover { background: #0066CC; transform: translateY(-2px); }
+
+        .section-title { font-size: 1.35rem; font-weight: 800; color: var(--primary); margin-bottom: 1.25rem; border-left: 5px solid var(--secondary); padding-left: 10px; }
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.25rem; }
-        .card { background: var(--surface); border: 1px solid var(--border); border-top: 4px solid var(--secondary); border-radius: 12px; padding: 1.5rem; text-decoration: none; color: inherit; display: flex; flex-direction: column; justify-content: space-between; }
-        .card .num { font-size: 0.8rem; font-weight: 800; color: var(--secondary); text-transform: uppercase; margin-bottom: 0.5rem; }
-        .card h3 { margin: 0 0 0.5rem 0; color: var(--primary); }
-        .card p { margin: 0 0 1rem 0; color: #475569; font-size: 0.9rem; }
+
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-top: 4px solid var(--secondary);
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            text-decoration: none;
+            color: inherit;
+            box-shadow: var(--shadow-sm);
+            transition: transform 0.2s, border-color 0.2s;
+        }
+        .card:hover { transform: translateY(-3px); border-color: var(--secondary); }
+        .card-num { font-size: 0.75rem; font-weight: 800; color: var(--secondary); text-transform: uppercase; margin-bottom: 0.35rem; }
+        .card-title { font-size: 1.1rem; font-weight: 700; color: var(--primary); margin-bottom: 0.5rem; }
+        .card-desc { font-size: 0.88rem; color: var(--text-secondary); margin-bottom: 1.25rem; flex-grow: 1; }
+        .card-btn {
+            background: var(--primary);
+            color: #FFF;
+            padding: 0.55rem 1rem;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-align: center;
+        }
+        .card:hover .card-btn { background: var(--secondary); }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1 style="margin:0 0 0.5rem 0; font-size:1.8rem;">Custeio Variavel e Margem de Contribuicao</h1>
-            <p style="margin:0; opacity:0.9;">Gestão de Custos • Prof. Msc. Philipe Sampaio Lima • CEST Anil</p>
+            <div class="tag-class">Encontro 04 • Administração CEST Anil</div>
+            <h1 class="header-title">Custeio Variável & Margem de Contribuição</h1>
+            <p class="header-desc">
+                Fundamentos da separação entre custos variáveis e fixos, cálculo da margem de contribuição como motor de geração de caixa e demonstrações de resultado focadas em tomada de decisão.
+            </p>
+            <div class="header-meta">
+                <div class="meta-item"><span>Disciplina</span><strong>Gestão de Custos</strong></div>
+                <div class="meta-item"><span>Docente</span><strong>Prof. Msc. Philipe Sampaio Lima</strong></div>
+                <div class="meta-item"><span>Aplicação Prática</span><strong>DRE Gerencial e Decisões de Curto Prazo</strong></div>
+            </div>
         </header>
-        <div class="links">
-            <a href="atv.html" class="btn btn-green">Laboratório de Exercícios (Aluno)</a>
-            <a href="gbt.html" class="btn">Painel do Professor (Solucionador)</a>
+
+        <div class="actions">
+            <a href="atv.html" class="btn btn-green">Caderno de Exercícios Práticos (Aluno)</a>
+            <a href="gbt.html" class="btn btn-blue">Painel do Docente (Soluções Passo a Passo)</a>
         </div>
+
+        <h2 class="section-title">Trilha Pedagógica dos 10 Módulos de Estudo</h2>
+
         <div class="grid">
-        <a href="1.html" class="card">
-            <div>
-                <div class="num">Tópico 1 de 10</div>
-                <h3>Tópico 1</h3>
-                <p>Slides e modelos quantitativos do tópico 1.</p>
-            </div>
-            <span class="btn">Acessar Slides &rarr;</span>
-        </a>
-        <a href="2.html" class="card">
-            <div>
-                <div class="num">Tópico 2 de 10</div>
-                <h3>Tópico 2</h3>
-                <p>Slides e modelos quantitativos do tópico 2.</p>
-            </div>
-            <span class="btn">Acessar Slides &rarr;</span>
-        </a>
-        <a href="3.html" class="card">
-            <div>
-                <div class="num">Tópico 3 de 10</div>
-                <h3>Tópico 3</h3>
-                <p>Slides e modelos quantitativos do tópico 3.</p>
-            </div>
-            <span class="btn">Acessar Slides &rarr;</span>
-        </a>
-        <a href="4.html" class="card">
-            <div>
-                <div class="num">Tópico 4 de 10</div>
-                <h3>Tópico 4</h3>
-                <p>Slides e modelos quantitativos do tópico 4.</p>
-            </div>
-            <span class="btn">Acessar Slides &rarr;</span>
-        </a>
-        <a href="5.html" class="card">
-            <div>
-                <div class="num">Tópico 5 de 10</div>
-                <h3>Tópico 5</h3>
-                <p>Slides e modelos quantitativos do tópico 5.</p>
-            </div>
-            <span class="btn">Acessar Slides &rarr;</span>
-        </a>
-        <a href="6.html" class="card">
-            <div>
-                <div class="num">Tópico 6 de 10</div>
-                <h3>Tópico 6</h3>
-                <p>Slides e modelos quantitativos do tópico 6.</p>
-            </div>
-            <span class="btn">Acessar Slides &rarr;</span>
-        </a>
-        <a href="7.html" class="card">
-            <div>
-                <div class="num">Tópico 7 de 10</div>
-                <h3>Tópico 7</h3>
-                <p>Slides e modelos quantitativos do tópico 7.</p>
-            </div>
-            <span class="btn">Acessar Slides &rarr;</span>
-        </a>
-        <a href="8.html" class="card">
-            <div>
-                <div class="num">Tópico 8 de 10</div>
-                <h3>Tópico 8</h3>
-                <p>Slides e modelos quantitativos do tópico 8.</p>
-            </div>
-            <span class="btn">Acessar Slides &rarr;</span>
-        </a>
-        <a href="9.html" class="card">
-            <div>
-                <div class="num">Tópico 9 de 10</div>
-                <h3>Tópico 9</h3>
-                <p>Slides e modelos quantitativos do tópico 9.</p>
-            </div>
-            <span class="btn">Acessar Slides &rarr;</span>
-        </a>
-        <a href="10.html" class="card">
-            <div>
-                <div class="num">Tópico 10 de 10</div>
-                <h3>Tópico 10</h3>
-                <p>Slides e modelos quantitativos do tópico 10.</p>
-            </div>
-            <span class="btn">Acessar Slides &rarr;</span>
-        </a>
+            <a href="1.html" class="card">
+                <div>
+                    <div class="card-num">Tópico 01</div>
+                    <h3 class="card-title">Fundamentos do Custeio Variável</h3>
+                    <p class="card-desc">O choque entre a visão societária e a gerencial: por que os custos fixos devem ser tratados como despesas do período.</p>
+                </div>
+                <div class="card-btn">Acessar Tópico &rarr;</div>
+            </a>
+
+            <a href="2.html" class="card">
+                <div>
+                    <div class="card-num">Tópico 02</div>
+                    <h3 class="card-title">Margem de Contribuição Unitária e Total</h3>
+                    <p class="card-desc">A mecânica da contribuição que cada produto deixa para amortizar o gasto fixo e gerar lucro líquido.</p>
+                </div>
+                <div class="card-btn">Acessar Tópico &rarr;</div>
+            </a>
+
+            <a href="3.html" class="card">
+                <div>
+                    <div class="card-num">Tópico 03</div>
+                    <h3 class="card-title">Estrutura da DRE no Custeio Variável</h3>
+                    <p class="card-desc">Montagem sistemática da DRE gerencial, contrastando com o modelo tradicional por absorção.</p>
+                </div>
+                <div class="card-btn">Acessar Tópico &rarr;</div>
+            </a>
+
+            <a href="4.html" class="card">
+                <div>
+                    <div class="card-num">Tópico 04</div>
+                    <h3 class="card-title">Impacto da Variação de Estoques no Lucro</h3>
+                    <p class="card-desc">A ilusão contábil do lucro pelo acúmulo de estoques na absorção e a transparência do método variável.</p>
+                </div>
+                <div class="card-btn">Acessar Tópico &rarr;</div>
+            </a>
+
+            <a href="5.html" class="card">
+                <div>
+                    <div class="card-num">Tópico 05</div>
+                    <h3 class="card-title">Índice de Margem de Contribuição (IMC)</h3>
+                    <p class="card-desc">Análise percentual da rentabilidade das receitas e critérios para priorização de portfólio.</p>
+                </div>
+                <div class="card-btn">Acessar Tópico &rarr;</div>
+            </a>
+
+            <a href="6.html" class="card">
+                <div>
+                    <div class="card-num">Tópico 06</div>
+                    <h3 class="card-title">Limitações Legais e Conciliação Fisco-Gestão</h3>
+                    <p class="card-desc">Normas CPC 16, RIR e mecanismos de conciliação entre relatórios gerenciais e a escrituração fiscal.</p>
+                </div>
+                <div class="card-btn">Acessar Tópico &rarr;</div>
+            </a>
+
+            <a href="7.html" class="card">
+                <div>
+                    <div class="card-num">Tópico 07</div>
+                    <h3 class="card-title">Decisão de Preço em Pedidos Especiais</h3>
+                    <p class="card-desc">Regras de decisão para encomendas extraordinárias usando capacidade ociosa sem inflar custos fixos.</p>
+                </div>
+                <div class="card-btn">Acessar Tópico &rarr;</div>
+            </a>
+
+            <a href="8.html" class="card">
+                <div>
+                    <div class="card-num">Tópico 08</div>
+                    <h3 class="card-title">Otimização sob Restrição de Capacidade</h3>
+                    <p class="card-desc">Maximização da margem por hora de gargalo produtivo para tomada de decisão em cenários de saturação.</p>
+                </div>
+                <div class="card-btn">Acessar Tópico &rarr;</div>
+            </a>
+
+            <a href="9.html" class="card">
+                <div>
+                    <div class="card-num">Tópico 09</div>
+                    <h3 class="card-title">Mix de Produtos e Contribuição Média</h3>
+                    <p class="card-desc">Comportamento da margem ponderada de vendas e os efeitos de alterações na carteira de produtos.</p>
+                </div>
+                <div class="card-btn">Acessar Tópico &rarr;</div>
+            </a>
+
+            <a href="10.html" class="card">
+                <div>
+                    <div class="card-num">Tópico 10</div>
+                    <h3 class="card-title">Síntese Estratégica e Rumo ao Equilíbrio</h3>
+                    <p class="card-desc">Matriz de aplicabilidade prática e conexão direta com a Análise Custo-Volume-Lucro do Encontro 05.</p>
+                </div>
+                <div class="card-btn">Acessar Tópico &rarr;</div>
+            </a>
         </div>
     </div>
 </body>

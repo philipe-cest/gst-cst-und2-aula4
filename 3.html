@@ -3,37 +3,269 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tópico 3 | Custeio Variavel e Margem de Contribuicao</title>
+    <title>Tópico 3: Estrutura da DRE no Custeio Variável | CEST</title>
     <style>
-        :root { --primary: #002060; --secondary: #0080FF; --bg: #F4F7FA; --surface: #FFF; --border: #E2E8F0; }
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: system-ui, sans-serif; background: var(--bg); margin: 0; padding: 2rem; color: #0F172A; min-height: 100vh; display: flex; flex-direction: column; }
-        .container { max-width: 900px; width: 100%; margin: auto; }
-        .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 2.5rem; min-height: 480px; display: flex; flex-direction: column; justify-content: space-between; }
-        .tag { display: inline-block; font-size: 0.75rem; font-weight: 700; color: var(--secondary); background: #E6F2FF; padding: 4px 10px; border-radius: 6px; text-transform: uppercase; }
-        .title { font-size: 1.6rem; color: var(--primary); margin: 1rem 0; }
-        .highlight { background: #E6F2FF; border-left: 4px solid var(--secondary); padding: 1rem; border-radius: 4px; color: var(--primary); font-weight: 500; }
-        .controls { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); padding-top: 1rem; margin-top: 2rem; }
-        .btn { display: inline-block; padding: 0.65rem 1.25rem; font-size: 0.9rem; font-weight: 600; text-decoration: none; border-radius: 6px; }
+        :root {
+            --primary: #002060;
+            --primary-dark: #001138;
+            --secondary: #0080FF;
+            --secondary-light: #E6F2FF;
+            --success: #10B981;
+            --danger: #EF4444;
+            --background: #F4F7FA;
+            --surface: #FFFFFF;
+            --text-primary: #0F172A;
+            --text-secondary: #475569;
+            --border: #CBD5E1;
+            --radius-md: 12px;
+            --shadow-md: 0 4px 20px -2px rgba(0,32,96,0.08);
+            --font-mono: 'SFMono-Regular', Consolas, 'Courier New', monospace;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: system-ui, -apple-system, sans-serif; background: var(--background); color: var(--text-primary); line-height: 1.6; min-height: 100vh; display: flex; flex-direction: column; }
+        
+        header { background: #FFF; border-bottom: 1px solid var(--border); padding: 0.85rem 1.5rem; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
+        .brand { text-decoration: none; color: var(--primary); font-weight: 700; font-size: 0.95rem; }
+        
+        .container { max-width: 980px; width: 100%; margin: 2rem auto; padding: 0 1rem; flex-grow: 1; display: flex; flex-direction: column; }
+        
+        .slide-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 2.5rem; box-shadow: var(--shadow-md); min-height: 520px; display: none; flex-direction: column; justify-content: space-between; }
+        .slide-card.active { display: flex; }
+        
+        .slide-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 1rem; margin-bottom: 1.5rem; }
+        .tag { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--secondary); background: var(--secondary-light); padding: 4px 10px; border-radius: 6px; }
+        .title { font-size: 1.6rem; color: var(--primary); font-weight: 800; margin-bottom: 1rem; }
+        
+        .notepad-box {
+            background: #2D3748;
+            color: #E2E8F0;
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+            line-height: 1.5;
+            padding: 1.25rem;
+            border-radius: 8px;
+            margin: 1.25rem 0;
+            white-space: pre-wrap;
+            border-left: 5px solid var(--secondary);
+        }
+
+        .highlight-box { background: var(--secondary-light); border-left: 4px solid var(--secondary); padding: 1.2rem; border-radius: 6px; margin: 1.25rem 0; color: var(--primary); font-weight: 500; }
+
+        .dre-sim-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; background: #F8FAFC; border: 1px solid var(--border); border-radius: 8px; padding: 1.25rem; margin: 1.25rem 0; }
+        .form-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; font-size: 0.88rem; }
+        .form-row input { width: 120px; padding: 0.4rem 0.6rem; border: 1.5px solid var(--border); border-radius: 4px; font-family: var(--font-mono); font-weight: 700; text-align: right; }
+
+        .dre-table { width: 100%; border-collapse: collapse; font-family: var(--font-mono); font-size: 0.85rem; background: #FFF; border: 1px solid var(--border); border-radius: 6px; }
+        .dre-table td { padding: 6px 12px; border-bottom: 1px solid var(--border); }
+        .dre-table tr.total-row { background: #F1F5F9; font-weight: 800; }
+        .dre-table tr.highlight-row { background: var(--secondary-light); font-weight: 800; color: var(--primary); }
+
+        .controls { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); padding-top: 1.25rem; margin-top: 2rem; }
+        .btn { padding: 0.75rem 1.5rem; font-size: 0.9rem; font-weight: 700; border-radius: 6px; text-decoration: none; cursor: pointer; border: none; }
         .btn-nav { background: var(--primary); color: #FFF; }
         .btn-out { background: transparent; color: var(--primary); border: 1.5px solid var(--border); }
+        .progress-dots { display: flex; gap: 8px; }
+        .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--border); cursor: pointer; }
+        .dot.active { background: var(--secondary); width: 22px; border-radius: 10px; }
     </style>
 </head>
 <body>
+    <header>
+        <a href="index.html" class="brand">&larr; Portal da Aula 04</a>
+        <span style="font-size:0.85rem; font-weight:700; color:var(--text-secondary);">Tópico 3 de 10: DRE no Custeio Variável</span>
+    </header>
+
     <div class="container">
-        <div class="card">
+        <!-- Slide 1 -->
+        <div class="slide-card active" data-slide="1">
             <div>
-                <span class="tag">Tópico 3 de 10</span>
-                <h1 class="title">Tópico 3: Módulo Estrutural</h1>
-                <p style="color:#475569; margin-bottom:1rem;">Estrutura pronta para recepção dos slides e formulações parametrizadas da disciplina.</p>
-                <div class="highlight">Gestão de Custos • Prof. Msc. Philipe Sampaio Lima • CEST Anil</div>
+                <div class="slide-header">
+                    <span class="tag">Estruturação Gerencial</span>
+                    <span style="font-weight:700; color:var(--text-secondary);">Slide 01 / 04</span>
+                </div>
+                <h1 class="title">O Formato Padrão da DRE Variável</h1>
+                <p>A Demonstração do Resultado no Custeio Variável organiza as linhas de forma puramente causal: primeiro tudo o que varia com as vendas; depois todos os custos e despesas fixas.</p>
+                
+                <div class="notepad-box">[ ESQUELETO DA DRE GERENCIAL NO BLOCO DE NOTAS ]
+(+) RECEITA BRUTA DE VENDAS
+(-) Deducoes e Tributos sobre a Venda
+(=) RECEITA LIQUIDA DE VENDAS
+(-) Custos Variaveis dos Produtos Vendidos (Custo Fabril Variavel)
+(-) Despesas Variaveis de Vendas (Comissoes, Fretes, Impostos Variaveis)
+(=) MARGEM DE CONTRIBUICAO TOTAL
+(-) CUSTOS FIXOS TOTAIS (Estrutura Fabril)
+(-) DESPESAS FIXAS TOTAIS (Administracao e Vendas Fixas)
+(=) LUCRO OPERACIONAL LIQUIDO (LAJIR / EBIT)</div>
             </div>
-            <div class="controls">
-                <a href="2.html" class="btn btn-out">&larr; Anterior</a>
-                <span style="font-weight:700; color:var(--primary);">Slide 1 / 10</span>
-                <a href="4.html" class="btn btn-nav">Próximo &rarr;</a>
+            <div class="controls"></div>
+        </div>
+
+        <!-- Slide 2 -->
+        <div class="slide-card" data-slide="2">
+            <div>
+                <div class="slide-header">
+                    <span class="tag">Diferença de Agrupamento</span>
+                    <span style="font-weight:700; color:var(--text-secondary);">Slide 02 / 04</span>
+                </div>
+                <h1 class="title">Por que a DRE Variável é Superior para Decisão?</h1>
+                <p>Na DRE societária tradicional (Absorção), misturam-se custos fixos e variáveis na linha do CPV. Isso gera uma grande armadilha:</p>
+                
+                <div class="highlight-box">
+                    • <strong>Na DRE Tradicional:</strong> O gerente não sabe dizer o que vai acontecer com o lucro se as vendas caírem 10%, porque os custos fixos estão camuflados dentro do CPV.<br><br>
+                    • <strong>Na DRE Variável:</strong> O impacto é imediato! Se as vendas aumentam em 100 unidades, o lucro sobe exatamente: <strong>100 * Margem de Contribuição Unitária</strong>, pois a estrutura fixa permanece inalterada!
+                </div>
             </div>
+            <div class="controls"></div>
+        </div>
+
+        <!-- Slide 3 -->
+        <div class="slide-card" data-slide="3">
+            <div>
+                <div class="slide-header">
+                    <span class="tag">Simulador em Sala</span>
+                    <span style="font-weight:700; color:var(--text-secondary);">Slide 03 / 04</span>
+                </div>
+                <h1 class="title">Simulador Dinâmico da DRE Gerencial</h1>
+                <p style="font-size:0.9rem; color:var(--text-secondary);">Altere os parâmetros para ver a recomposição instantânea da DRE:</p>
+
+                <div class="dre-sim-grid">
+                    <div>
+                        <div class="form-row">
+                            <span>Quantidade Vendida:</span>
+                            <input type="text" id="dreQtd" value="5.000" oninput="calcularDRE()">
+                        </div>
+                        <div class="form-row">
+                            <span>Preço Unitário (R$):</span>
+                            <input type="text" id="drePv" value="50,00" oninput="calcularDRE()">
+                        </div>
+                        <div class="form-row">
+                            <span>Custo Variável Unit. (R$):</span>
+                            <input type="text" id="dreCv" value="22,00" oninput="calcularDRE()">
+                        </div>
+                        <div class="form-row">
+                            <span>Despesa Variável Unit. (R$):</span>
+                            <input type="text" id="dreDv" value="3,00" oninput="calcularDRE()">
+                        </div>
+                        <div class="form-row">
+                            <span>Custos Fixos Totais (R$):</span>
+                            <input type="text" id="dreCf" value="70.000,00" oninput="calcularDRE()">
+                        </div>
+                        <div class="form-row">
+                            <span>Despesas Fixas Totais (R$):</span>
+                            <input type="text" id="dreDf" value="30.000,00" oninput="calcularDRE()">
+                        </div>
+                    </div>
+
+                    <div>
+                        <table class="dre-table">
+                            <tr><td>(=) Receita Bruta</td><td id="lblRec" style="text-align:right;">R$ 250.000,00</td></tr>
+                            <tr><td>(-) Custos Variáveis</td><td id="lblCv" style="text-align:right; color:#DC2626;">- R$ 110.000,00</td></tr>
+                            <tr><td>(-) Despesas Variáveis</td><td id="lblDv" style="text-align:right; color:#DC2626;">- R$ 15.000,00</td></tr>
+                            <tr class="highlight-row"><td>(=) MARGEM CONTRIBUIÇÃO</td><td id="lblMc" style="text-align:right;">R$ 125.000,00</td></tr>
+                            <tr><td>(-) Custos Fixos</td><td id="lblCf" style="text-align:right; color:#DC2626;">- R$ 70.000,00</td></tr>
+                            <tr><td>(-) Despesas Fixas</td><td id="lblDf" style="text-align:right; color:#DC2626;">- R$ 30.000,00</td></tr>
+                            <tr class="total-row"><td>(=) LUCRO OPERACIONAL</td><td id="lblLucro" style="text-align:right; color:#059669;">R$ 25.000,00</td></tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="controls"></div>
+        </div>
+
+        <!-- Slide 4 -->
+        <div class="slide-card" data-slide="4">
+            <div>
+                <div class="slide-header">
+                    <span class="tag">Conexão Prática</span>
+                    <span style="font-weight:700; color:var(--text-secondary);">Slide 04 / 04</span>
+                </div>
+                <h1 class="title">A Relação Direta Volume-Lucro</h1>
+                <p>Observe a linearidade analítica proporcionada pela DRE Gerencial:</p>
+                
+                <div class="notepad-box">[ PROJECAO RAPIDA DE SENSIBILIDADE ]
+Variacao_no_Lucro = Variacao_na_Quantidade_Vendida * Margem_de_Contribuicao_Unitaria
+
+Exemplo:
+Se a empresa vender 500 unidades a mais:
+Aumento_de_Lucro = 500 un * R$ 25,00/un = R$ 12.500,00 adicionais no lucro liquido!
+Nao e necessario recalcular rateios ou refazer planilhas complexas!</div>
+
+                <p style="text-align:center; margin-top:1.5rem;">
+                    No <strong>Tópico 4</strong>, examinaremos o que acontece quando a produção é diferente das vendas e como isso gera divergências no lucro entre Absorção e Custeio Variável.
+                </p>
+            </div>
+            <div class="controls"></div>
         </div>
     </div>
+
+    <script>
+        let cur = 1;
+        const total = 4;
+
+        function parseBR(v) { return parseFloat((v || '0').replace(/\./g, '').replace(',', '.')) || 0; }
+        function fmtMoeda(n) { return "R$ " + n.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+
+        function calcularDRE() {
+            const qtd = parseBR(document.getElementById('dreQtd').value);
+            const pv = parseBR(document.getElementById('drePv').value);
+            const cv = parseBR(document.getElementById('dreCv').value);
+            const dv = parseBR(document.getElementById('dreDv').value);
+            const cf = parseBR(document.getElementById('dreCf').value);
+            const df = parseBR(document.getElementById('dreDf').value);
+
+            const rec = qtd * pv;
+            const totCv = qtd * cv;
+            const totDv = qtd * dv;
+            const mc = rec - totCv - totDv;
+            const lucro = mc - cf - df;
+
+            document.getElementById('lblRec').innerText = fmtMoeda(rec);
+            document.getElementById('lblCv').innerText = "- " + fmtMoeda(totCv);
+            document.getElementById('lblDv').innerText = "- " + fmtMoeda(totDv);
+            document.getElementById('lblMc').innerText = fmtMoeda(mc);
+            document.getElementById('lblCf').innerText = "- " + fmtMoeda(cf);
+            document.getElementById('lblDf').innerText = "- " + fmtMoeda(df);
+            
+            const elLucro = document.getElementById('lblLucro');
+            elLucro.innerText = fmtMoeda(lucro);
+            elLucro.style.color = lucro >= 0 ? '#059669' : '#DC2626';
+        }
+
+        function render() {
+            document.querySelectorAll('.controls').forEach(bar => {
+                bar.innerHTML = `
+                    <button class="btn btn-out" onclick="go(-1)" ${cur === 1 ? 'disabled style="opacity:0.4; cursor:not-allowed;"' : ''}>&larr; Anterior</button>
+                    <div class="progress-dots">
+                        ${Array.from({length: total}, (_, i) => `<span class="dot ${i+1 === cur ? 'active' : ''}" onclick="toSlide(${i+1})"></span>`).join('')}
+                    </div>
+                    ${cur < total 
+                        ? `<button class="btn btn-nav" onclick="go(1)">Próximo &rarr;</button>`
+                        : `<a href="4.html" class="btn btn-nav" style="background:#10B981;">Ir para Tópico 4 &rarr;</a>`
+                    }
+                `;
+            });
+        }
+
+        function show(n) {
+            document.querySelectorAll('.slide-card').forEach(c => c.classList.remove('active'));
+            document.querySelector(`.slide-card[data-slide="${n}"]`).classList.add('active');
+            cur = n;
+            render();
+        }
+
+        function go(s) { if(cur + s >= 1 && cur + s <= total) show(cur + s); }
+        function toSlide(n) { show(n); }
+
+        document.addEventListener('keydown', e => {
+            if (e.key === 'ArrowRight' && cur < total) go(1);
+            if (e.key === 'ArrowLeft' && cur > 1) go(-1);
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            render();
+            calcularDRE();
+        });
+    </script>
 </body>
 </html>

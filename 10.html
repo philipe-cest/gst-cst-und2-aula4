@@ -3,37 +3,217 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tópico 10 | Custeio Variavel e Margem de Contribuicao</title>
+    <title>Tópico 10: Matriz Decisória e Fechamento | CEST</title>
     <style>
-        :root { --primary: #002060; --secondary: #0080FF; --bg: #F4F7FA; --surface: #FFF; --border: #E2E8F0; }
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: system-ui, sans-serif; background: var(--bg); margin: 0; padding: 2rem; color: #0F172A; min-height: 100vh; display: flex; flex-direction: column; }
-        .container { max-width: 900px; width: 100%; margin: auto; }
-        .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 2.5rem; min-height: 480px; display: flex; flex-direction: column; justify-content: space-between; }
-        .tag { display: inline-block; font-size: 0.75rem; font-weight: 700; color: var(--secondary); background: #E6F2FF; padding: 4px 10px; border-radius: 6px; text-transform: uppercase; }
-        .title { font-size: 1.6rem; color: var(--primary); margin: 1rem 0; }
-        .highlight { background: #E6F2FF; border-left: 4px solid var(--secondary); padding: 1rem; border-radius: 4px; color: var(--primary); font-weight: 500; }
-        .controls { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); padding-top: 1rem; margin-top: 2rem; }
-        .btn { display: inline-block; padding: 0.65rem 1.25rem; font-size: 0.9rem; font-weight: 600; text-decoration: none; border-radius: 6px; }
+        :root {
+            --primary: #002060;
+            --primary-dark: #001138;
+            --secondary: #0080FF;
+            --secondary-light: #E6F2FF;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --danger: #EF4444;
+            --background: #F4F7FA;
+            --surface: #FFFFFF;
+            --text-primary: #0F172A;
+            --text-secondary: #475569;
+            --border: #CBD5E1;
+            --radius-md: 12px;
+            --shadow-md: 0 4px 20px -2px rgba(0,32,96,0.08);
+            --font-mono: 'SFMono-Regular', Consolas, 'Courier New', monospace;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: system-ui, -apple-system, sans-serif; background: var(--background); color: var(--text-primary); line-height: 1.6; min-height: 100vh; display: flex; flex-direction: column; }
+        
+        header { background: #FFF; border-bottom: 1px solid var(--border); padding: 0.85rem 1.5rem; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
+        .brand { text-decoration: none; color: var(--primary); font-weight: 700; font-size: 0.95rem; }
+        
+        .container { max-width: 980px; width: 100%; margin: 2rem auto; padding: 0 1rem; flex-grow: 1; display: flex; flex-direction: column; }
+        
+        .slide-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 2.5rem; box-shadow: var(--shadow-md); min-height: 520px; display: none; flex-direction: column; justify-content: space-between; }
+        .slide-card.active { display: flex; }
+        
+        .slide-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 1rem; margin-bottom: 1.5rem; }
+        .tag { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--secondary); background: var(--secondary-light); padding: 4px 10px; border-radius: 6px; }
+        .title { font-size: 1.6rem; color: var(--primary); font-weight: 800; margin-bottom: 1rem; }
+        
+        .notepad-box {
+            background: #2D3748;
+            color: #E2E8F0;
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+            line-height: 1.5;
+            padding: 1.25rem;
+            border-radius: 8px;
+            margin: 1.25rem 0;
+            white-space: pre-wrap;
+            border-left: 5px solid var(--secondary);
+        }
+
+        .highlight-box { background: var(--secondary-light); border-left: 4px solid var(--secondary); padding: 1.2rem; border-radius: 6px; margin: 1.25rem 0; color: var(--primary); font-weight: 500; }
+
+        .matrix-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; margin: 1rem 0; }
+        .matrix-table th, .matrix-table td { border: 1px solid var(--border); padding: 10px 12px; }
+        .matrix-table th { background: var(--primary); color: #FFF; text-align: left; }
+        .matrix-table tr:nth-child(even) { background: #F8FAFC; }
+
+        .controls { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); padding-top: 1.25rem; margin-top: 2rem; }
+        .btn { padding: 0.75rem 1.5rem; font-size: 0.9rem; font-weight: 700; border-radius: 6px; text-decoration: none; cursor: pointer; border: none; }
         .btn-nav { background: var(--primary); color: #FFF; }
         .btn-out { background: transparent; color: var(--primary); border: 1.5px solid var(--border); }
+        .progress-dots { display: flex; gap: 8px; }
+        .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--border); cursor: pointer; }
+        .dot.active { background: var(--secondary); width: 22px; border-radius: 10px; }
     </style>
 </head>
 <body>
+    <header>
+        <a href="index.html" class="brand">&larr; Portal da Aula 04</a>
+        <span style="font-size:0.85rem; font-weight:700; color:var(--text-secondary);">Tópico 10 de 10: Matriz Decisória e Fechamento</span>
+    </header>
+
     <div class="container">
-        <div class="card">
+        <!-- Slide 1 -->
+        <div class="slide-card active" data-slide="1">
             <div>
-                <span class="tag">Tópico 10 de 10</span>
-                <h1 class="title">Tópico 10: Módulo Estrutural</h1>
-                <p style="color:#475569; margin-bottom:1rem;">Estrutura pronta para recepção dos slides e formulações parametrizadas da disciplina.</p>
-                <div class="highlight">Gestão de Custos • Prof. Msc. Philipe Sampaio Lima • CEST Anil</div>
+                <div class="slide-header">
+                    <span class="tag">Balanço Conceitual</span>
+                    <span style="font-weight:700; color:var(--text-secondary);">Slide 01 / 04</span>
+                </div>
+                <h1 class="title">Matriz Decisória do Administrador</h1>
+                <p>O Custeio Variável é a ferramenta por excelência para a tomada de decisões de curto prazo. A tabela abaixo resume as principais aplicações executivas:</p>
+                
+                <table class="matrix-table">
+                    <tr>
+                        <th>Dilema Gerencial</th>
+                        <th>Critério no Custeio Variável</th>
+                        <th>Ação Recomendada</th>
+                    </tr>
+                    <tr>
+                        <td><strong>Aceitar Pedido Especial</strong></td>
+                        <td>Preço > Gasto Variável Incremental (com capacidade livre)</td>
+                        <td>Aceitar se não canibalizar mercado regular</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Eliminar Linha Deficitária</strong></td>
+                        <td>Linha tem MC > 0, mas Lucro Líquido < 0 na absorção</td>
+                        <td>Manter a linha (sua exclusão sobrecarrega as outras)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Gargalo Operacional</strong></td>
+                        <td>Margem de Contribuição por unidade de recurso escasso</td>
+                        <td>Priorizar item com maior MC/hora de gargalo</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Campanha Comercial</strong></td>
+                        <td>Índice de Margem de Contribuição (IMC)</td>
+                        <td>Incentivar produtos que deixam maior % de margem</td>
+                    </tr>
+                </table>
             </div>
-            <div class="controls">
-                <a href="9.html" class="btn btn-out">&larr; Anterior</a>
-                <span style="font-weight:700; color:var(--primary);">Slide 1 / 10</span>
-                <a href="index.html" class="btn btn-nav">Concluir &rarr;</a>
+            <div class="controls"></div>
+        </div>
+
+        <!-- Slide 2 -->
+        <div class="slide-card" data-slide="2">
+            <div>
+                <div class="slide-header">
+                    <span class="tag">Síntese de Métodos</span>
+                    <span style="font-weight:700; color:var(--text-secondary);">Slide 02 / 04</span>
+                </div>
+                <h1 class="title">Quando Usar Cada Método?</h1>
+                <p>Nenhum método é exclusivo; eles atendem a propósitos distintos na empresa moderna:</p>
+
+                <div class="notepad-box">[ QUADRO COMPARATIVO DAS 3 METODOLOGIAS ]
+1. Custeio por Absorcao:
+   - Uso: Obrigatorio para Fisco (IRPJ/CSLL), Auditoria Externa e Balancos Societarios.
+   - Foco: Conformidade legal e demonstracoes oficiais de encerramento de exercicio.
+
+2. Custeio ABC (Baseado em Atividades):
+   - Uso: Gestao estrategica de processos, reducao de custos indiretos e custos de servir.
+   - Foco: Apuracao de longo prazo e eliminacao de subsidios cruzados complexos.
+
+3. Custeio Variavel (Marginal):
+   - Uso: Decisoes taticas cotidianas, precificacao em crise e simulacoes de lucro.
+   - Foco: Analise de curto prazo e geracao imediata de fluxo de caixa operacional.</div>
             </div>
+            <div class="controls"></div>
+        </div>
+
+        <!-- Slide 3 -->
+        <div class="slide-card" data-slide="3">
+            <div>
+                <div class="slide-header">
+                    <span class="tag">Ponte Metodológica</span>
+                    <span style="font-weight:700; color:var(--text-secondary);">Slide 03 / 04</span>
+                </div>
+                <h1 class="title">A Conexão com o Encontro 05: Análise CVL</h1>
+                <p>Dominar o Custeio Variável e a Margem de Contribuição é o alicerce fundamental para a ferramenta mais poderosa de planejamento orçamentário:</p>
+                <div class="highlight-box">
+                    <strong>Na Aula 05 estudaremos a Relação Custo-Volume-Lucro (CVL):</strong><br><br>
+                    • <strong>Ponto de Equilíbrio Contábil (PEC):</strong> O volume exato de vendas para cobrir custos fixos (Lucro Zero).<br>
+                    • <strong>Ponto de Equilíbrio Econômico (PEE):</strong> O volume necessário para remunerar o custo de oportunidade do capital do sócio.<br>
+                    • <strong>Ponto de Equilíbrio Financeiro (PEF):</strong> O volume mínimo para a empresa não ficar inadimplente com pagamentos em dinheiro.
+                </div>
+            </div>
+            <div class="controls"></div>
+        </div>
+
+        <!-- Slide 4 -->
+        <div class="slide-card" data-slide="4">
+            <div>
+                <div class="slide-header">
+                    <span class="tag">Conclusão da Aula 04</span>
+                    <span style="font-weight:700; color:var(--text-secondary);">Slide 04 / 04</span>
+                </div>
+                <h1 class="title">Síntese Consolidada dos Conceitos</h1>
+                <div class="highlight-box" style="text-align:center; font-size:1.05rem;">
+                    <strong>Regra Central do Administrador:</strong> "Não rateie custos fixos para decidir preços de curto prazo. Verifique a capacidade instalada, exija margem de contribuição positiva e cuide para que o mix gere caixa suficiente para amortizar a estrutura do negócio."
+                </div>
+                <p style="text-align:center; margin-top:2rem;">
+                    <a href="index.html" class="btn btn-nav" style="padding:0.9rem 2rem;">&larr; Retornar ao Portal Principal da Aula 04</a>
+                </p>
+            </div>
+            <div class="controls"></div>
         </div>
     </div>
+
+    <script>
+        let cur = 1;
+        const total = 4;
+
+        function render() {
+            document.querySelectorAll('.controls').forEach(bar => {
+                bar.innerHTML = `
+                    <button class="btn btn-out" onclick="go(-1)" ${cur === 1 ? 'disabled style="opacity:0.4; cursor:not-allowed;"' : ''}>&larr; Anterior</button>
+                    <div class="progress-dots">
+                        ${Array.from({length: total}, (_, i) => `<span class="dot ${i+1 === cur ? 'active' : ''}" onclick="toSlide(${i+1})"></span>`).join('')}
+                    </div>
+                    ${cur < total 
+                        ? `<button class="btn btn-nav" onclick="go(1)">Próximo &rarr;</button>`
+                        : `<a href="index.html" class="btn btn-nav" style="background:#10B981;">Concluir Apresentação &rarr;</a>`
+                    }
+                `;
+            });
+        }
+
+        function show(n) {
+            document.querySelectorAll('.slide-card').forEach(c => c.classList.remove('active'));
+            document.querySelector(`.slide-card[data-slide="${n}"]`).classList.add('active');
+            cur = n;
+            render();
+        }
+
+        function go(s) { if(cur + s >= 1 && cur + s <= total) show(cur + s); }
+        function toSlide(n) { show(n); }
+
+        document.addEventListener('keydown', e => {
+            if (e.key === 'ArrowRight' && cur < total) go(1);
+            if (e.key === 'ArrowLeft' && cur > 1) go(-1);
+        });
+
+        document.addEventListener('DOMContentLoaded', () => { render(); });
+    </script>
 </body>
 </html>
