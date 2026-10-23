@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tópico 4: Impacto da Variação de Estoques no Lucro | CEST</title>
+    <title>Tópico 4: Impacto da Variação de Estoques no Lucro | Gestão de Custos CEST</title>
     <style>
         :root {
             --primary: #002060;
@@ -13,6 +13,7 @@
             --danger: #EF4444;
             --danger-light: #FEE2E2;
             --success: #10B981;
+            --success-light: #D1FAE5;
             --background: #F4F7FA;
             --surface: #FFFFFF;
             --text-primary: #0F172A;
@@ -29,45 +30,69 @@
         header { background: #FFF; border-bottom: 1px solid var(--border); padding: 0.85rem 1.5rem; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
         .brand { text-decoration: none; color: var(--primary); font-weight: 700; font-size: 0.95rem; }
         
-        .container { max-width: 980px; width: 100%; margin: 2rem auto; padding: 0 1rem; flex-grow: 1; display: flex; flex-direction: column; }
+        .container { max-width: 1020px; width: 100%; margin: 1.5rem auto; padding: 0 1rem; flex-grow: 1; display: flex; flex-direction: column; }
         
-        .slide-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 2.5rem; box-shadow: var(--shadow-md); min-height: 520px; display: none; flex-direction: column; justify-content: space-between; }
+        .slide-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 2.2rem; box-shadow: var(--shadow-md); min-height: 540px; display: none; flex-direction: column; justify-content: space-between; }
         .slide-card.active { display: flex; }
         
-        .slide-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 1rem; margin-bottom: 1.5rem; }
+        .slide-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 0.75rem; margin-bottom: 1.25rem; }
         .tag { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--secondary); background: var(--secondary-light); padding: 4px 10px; border-radius: 6px; }
-        .title { font-size: 1.6rem; color: var(--primary); font-weight: 800; margin-bottom: 1rem; }
+        .title { font-size: 1.55rem; color: var(--primary); font-weight: 800; margin-bottom: 0.75rem; }
         
         .notepad-box {
             background: #2D3748;
             color: #E2E8F0;
             font-family: var(--font-mono);
-            font-size: 0.9rem;
+            font-size: 0.88rem;
             line-height: 1.5;
-            padding: 1.25rem;
+            padding: 1.1rem;
             border-radius: 8px;
-            margin: 1.25rem 0;
+            margin: 1rem 0;
             white-space: pre-wrap;
             border-left: 5px solid var(--secondary);
         }
 
-        .highlight-box { background: var(--secondary-light); border-left: 4px solid var(--secondary); padding: 1.2rem; border-radius: 6px; margin: 1.25rem 0; color: var(--primary); font-weight: 500; }
+        .highlight-box { background: var(--secondary-light); border-left: 4px solid var(--secondary); padding: 1.1rem; border-radius: 6px; margin: 1rem 0; color: var(--primary); font-weight: 500; font-size: 0.95rem; }
+        
+        /* Layout do Simulador */
+        .sim-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; background: #F8FAFC; border: 1px solid var(--border); border-radius: 8px; padding: 1.25rem; margin: 1rem 0; }
+        .form-group { display: flex; flex-direction: column; gap: 0.3rem; margin-bottom: 0.65rem; }
+        .form-label { font-size: 0.75rem; font-weight: 700; color: var(--primary); text-transform: uppercase; }
+        .form-control { padding: 0.55rem 0.75rem; border: 1.5px solid var(--border); border-radius: 6px; font-family: var(--font-mono); font-weight: 700; font-size: 0.95rem; background: #FFF; }
 
-        .sim-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; background: #F8FAFC; border: 1px solid var(--border); border-radius: 8px; padding: 1.5rem; margin: 1.25rem 0; }
-        .form-group { display: flex; flex-direction: column; gap: 0.35rem; margin-bottom: 0.6rem; }
-        .form-label { font-size: 0.8rem; font-weight: 700; color: var(--primary); text-transform: uppercase; }
-        .form-control { padding: 0.6rem 0.8rem; border: 1.5px solid var(--border); border-radius: 6px; font-family: var(--font-mono); font-weight: 700; font-size: 0.95rem; }
+        .chart-box { background: #FFF; border: 1px solid var(--border); border-radius: 8px; padding: 1.25rem; display: flex; flex-direction: column; justify-content: space-between; }
+        .chart-title { font-size: 0.9rem; font-weight: 800; color: var(--primary); text-align: center; margin-bottom: 0.5rem; text-transform: uppercase; }
+        .bar-container { display: flex; justify-content: center; align-items: flex-end; gap: 2.5rem; height: 160px; border-bottom: 2px solid var(--border); padding-bottom: 8px; }
+        .bar-group { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; width: 75px; }
+        .bar { width: 100%; border-radius: 6px 6px 0 0; transition: height 0.3s ease; min-height: 8px; }
+        .bar.absorcao { background: var(--primary); }
+        .bar.variavel { background: var(--secondary); }
+        .bar-name { font-size: 0.75rem; font-weight: 700; color: var(--text-secondary); margin-top: 6px; text-align: center; }
+        .bar-val { font-size: 0.85rem; font-weight: 800; font-family: var(--font-mono); margin-top: 2px; }
 
-        .chart-box { background: #FFF; border: 1px solid var(--border); border-radius: 8px; padding: 1rem; display: flex; flex-direction: column; justify-content: center; }
-        .bars-container { display: flex; gap: 2rem; align-items: flex-end; height: 150px; border-bottom: 2px solid var(--border); padding-bottom: 6px; }
-        .bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; }
-        .bar-visual { width: 55px; border-radius: 4px 4px 0 0; transition: height 0.3s ease, background 0.3s ease; min-height: 4px; }
-        .bar-visual.abs { background: var(--primary); }
-        .bar-visual.var { background: var(--secondary); }
-        .bar-label { font-size: 0.78rem; font-weight: 700; color: var(--text-secondary); margin-top: 6px; text-align: center; }
+        .explanation-banner {
+            background: #EFF6FF;
+            border-left: 4px solid var(--secondary);
+            padding: 0.75rem 1rem;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            color: #1E293B;
+            margin-top: 0.75rem;
+            line-height: 1.45;
+        }
 
-        .controls { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); padding-top: 1.25rem; margin-top: 2rem; }
-        .btn { padding: 0.75rem 1.5rem; font-size: 0.9rem; font-weight: 700; border-radius: 6px; text-decoration: none; cursor: pointer; border: none; }
+        /* Tabela Detalhada de Rastreamento (De onde sai cada valor) */
+        .breakdown-section { margin-top: 1rem; }
+        .breakdown-title { font-size: 0.85rem; font-weight: 800; color: var(--primary); text-transform: uppercase; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 6px; }
+        .breakdown-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; font-family: var(--font-mono); background: #FFF; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+        .breakdown-table th { background: var(--primary); color: #FFF; padding: 6px 10px; font-weight: 700; text-align: left; }
+        .breakdown-table td { padding: 6px 10px; border-bottom: 1px solid var(--border); }
+        .breakdown-table tr:last-child td { border-bottom: none; }
+        .breakdown-table tr.total-row { background: #F1F5F9; font-weight: 800; }
+        .breakdown-table tr.highlight-diff { background: #FEF3C7; font-weight: 800; color: #92400E; }
+
+        .controls { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); padding-top: 1.25rem; margin-top: 1.5rem; }
+        .btn { padding: 0.7rem 1.4rem; font-size: 0.9rem; font-weight: 700; border-radius: 6px; text-decoration: none; cursor: pointer; border: none; }
         .btn-nav { background: var(--primary); color: #FFF; }
         .btn-out { background: transparent; color: var(--primary); border: 1.5px solid var(--border); }
         .progress-dots { display: flex; gap: 8px; }
@@ -78,7 +103,7 @@
 <body>
     <header>
         <a href="index.html" class="brand">&larr; Portal da Aula 04</a>
-        <span style="font-size:0.85rem; font-weight:700; color:var(--text-secondary);">Tópico 4 de 10: Variação de Estoques e Lucro</span>
+        <span style="font-size:0.85rem; font-weight:700; color:var(--text-secondary);">Tópico 4 de 10: Variação de Estoques</span>
     </header>
 
     <div class="container">
@@ -86,26 +111,27 @@
         <div class="slide-card active" data-slide="1">
             <div>
                 <div class="slide-header">
-                    <span class="tag">Divergência Contábil</span>
+                    <span class="tag">Mecanismo Contábil</span>
                     <span style="font-weight:700; color:var(--text-secondary);">Slide 01 / 04</span>
                 </div>
-                <h1 class="title">Por que os Lucros Finais Ficam Diferentes?</h1>
-                <p>Quando uma empresa não vende exatamente o mesmo volume que produziu no mês, surge uma discrepância matemática direta entre o lucro apurado pelo <strong>Custeio por Absorção</strong> e pelo <strong>Custeio Variável</strong>.</p>
-                
-                <div class="notepad-box">[ REGRA FUNDAMENTAL DE CONCILIACAO ]
-Diferenca_nos_Lucros = Lucro_Absorcao - Lucro_Variavel
-Diferenca_nos_Lucros = (Estoque_Final - Estoque_Inicial) * Custo_Fixo_Unitario_da_Producao
+                <h1 class="title">Por que os Métodos Apuram Lucros Diferentes?</h1>
+                <p>O lucro apurado pelo Custeio por Absorção só será idêntico ao do Custeio Variável se <strong>toda a produção for integralmente vendida no mesmo mês</strong> (sem formação nem queima de estoques).</p>
+                <p>A diferença entre os dois métodos não nasce na receita e nem nos custos variáveis: ela nasce exclusivamente no <strong>destino dado aos custos fixos</strong>:</p>
 
-Cenario 1: Producao > Vendas (Estoque Aumenta)
--> Lucro na Absorcao e MAIOR que no Custeio Variavel.
--> Motivo: Parte dos custos fixos do mes ficou guardada dentro do estoque no Ativo.
+                <div class="notepad-box">[ ONDE VAI PARAR O CUSTO FIXO? ]
 
-Cenario 2: Producao < Vendas (Estoque Diminui)
--> Lucro na Absorcao e MENOR que no Custeio Variavel.
--> Motivo: Custos fixos estocados em meses anteriores entram na DRE atual via CPV.
+1. No Custeio Variavel:
+   100% dos Custos Fixos vao direto para a DRE do mes como despesa do periodo.
+   Estoque Final = Guarda apenas Custos Variaveis.
 
-Cenario 3: Producao = Vendas (Estoque Estavel)
--> Lucro na Absorcao e IGUAL ao Lucro no Custeio Variavel.</div>
+2. No Custeio por Absorcao:
+   Os Custos Fixos sao fatiados entre as pecas produzidas.
+   Pecas que foram vendidas -> Custo Fixo vai para a DRE dentro do CPV.
+   Pecas que sobraram no estoque -> Custo Fixo fica PRESO no Ativo Circulante!</div>
+
+                <div class="highlight-box">
+                    <strong>Conclusão Direta:</strong> Quando sobram peças no estoque final, a Absorção "esconde" uma parte dos custos fixos no balanço. Como essa parte não vira despesa do mês, o lucro na Absorção parece artificialmente maior!
+                </div>
             </div>
             <div class="controls"></div>
         </div>
@@ -114,75 +140,134 @@ Cenario 3: Producao = Vendas (Estoque Estavel)
         <div class="slide-card" data-slide="2">
             <div>
                 <div class="slide-header">
-                    <span class="tag">Armadilha Gerencial</span>
+                    <span class="tag">As Três Regras</span>
                     <span style="font-weight:700; color:var(--text-secondary);">Slide 02 / 04</span>
                 </div>
-                <h1 class="title">A Ilusão do "Lucro Fabricado" na Absorção</h1>
-                <p>No método tradicional de absorção, um gestor mal-intencionado ou desatento pode aumentar o lucro contábil da fábrica sem vender uma única unidade extra:</p>
+                <h1 class="title">Relação Entre Produção, Vendas e Resultado</h1>
+                <p>Para acertar qualquer questão e diagnosticar demonstrações contábeis, aplique as 3 regras universais de conciliação de estoques:</p>
 
-                <div class="highlight-box">
-                    <strong>Como ocorre a manobra?</strong><br>
-                    Se a fábrica produzir em capacidade máxima (acumulando galpões cheios de produtos parados), o custo fixo é fatiado por mais peças. Com isso, a parcela de gasto fixo que cai na DRE diminui e a maior parte vai para o Balanço Patrimonial.<br><br>
-                    O resultado é um <strong>lucro contábil fictício</strong>, enquanto o fluxo de caixa real sangra com despesas de armazenagem, juros bancários e matérias-primas paradas!
-                </div>
-                <p>O <strong>Custeio Variável</strong> elimina esse vício: o lucro só cresce quando a equipe comercial <em>vende</em> de fato.</p>
+                <div class="notepad-box">[ AS 3 REGRAS DE CONCILIACAO ]
+
+Regra 1: Producao = Vendas (Estoque Inicial = Estoque Final)
+-> Lucro_Absorcao = Lucro_Variavel
+Nenhum custo fixo foi retido nem desovado de periodos anteriores.
+
+Regra 2: Producao > Vendas (Formacao de Estoque / Sobra de pecas)
+-> Lucro_Absorcao > Lucro_Variavel
+Uma parcela do custo fixo de fabrica ficou retida no Estoque do Balanco.
+
+Regra 3: Producao < Vendas (Queima / Reducao de Estoques)
+-> Lucro_Absorcao < Lucro_Variavel
+A DRE por absorcao recebe o custo fixo do mes atual MAIS o custo fixo
+que estava guardado nas pecas fabricadas no mes passado!</div>
             </div>
             <div class="controls"></div>
         </div>
 
-        <!-- Slide 3 -->
+        <!-- Slide 3: SIMULADOR E DECOMPOSIÇÃO PASSO A PASSO -->
         <div class="slide-card" data-slide="3">
             <div>
                 <div class="slide-header">
-                    <span class="tag">Simulador em Sala</span>
+                    <span class="tag">Simulador em Tempo Real</span>
                     <span style="font-weight:700; color:var(--text-secondary);">Slide 03 / 04</span>
                 </div>
                 <h1 class="title">Simulador: Absorção vs Variável com Estoques</h1>
-                <p style="font-size:0.9rem; color:var(--text-secondary);">Altere o volume produzido e vendido para observar a distorção do lucro em tempo real:</p>
+                <p style="font-size:0.88rem; color:var(--text-secondary);">Altere os campos abaixo. O simulador reescreve a origem exata de cada linha em tempo real:</p>
 
                 <div class="sim-grid">
+                    <!-- Coluna da Esquerda: Inputs -->
                     <div>
                         <div class="form-group">
                             <label class="form-label">Preço de Venda Unitário (R$)</label>
-                            <input type="text" id="inPv4" class="form-control" value="80,00" oninput="simularEstoques()">
+                            <input type="text" id="simPv" class="form-control" value="80,00" oninput="simular()">
                         </div>
                         <div class="form-group">
                             <label class="form-label">Custo Variável Unitário (R$)</label>
-                            <input type="text" id="inCv4" class="form-control" value="30,00" oninput="simularEstoques()">
+                            <input type="text" id="simCv" class="form-control" value="30,00" oninput="simular()">
                         </div>
                         <div class="form-group">
                             <label class="form-label">Custo Fixo Total do Mês (R$)</label>
-                            <input type="text" id="inCf4" class="form-control" value="50.000,00" oninput="simularEstoques()">
+                            <input type="text" id="simCf" class="form-control" value="1.000,00" oninput="simular()">
                         </div>
                         <div class="form-group">
                             <label class="form-label">Volume Produzido (Unidades)</label>
-                            <input type="text" id="inProd4" class="form-control" value="2.500" oninput="simularEstoques()">
+                            <input type="text" id="simQp" class="form-control" value="50" oninput="simular()">
                         </div>
                         <div class="form-group">
                             <label class="form-label">Volume Vendido (Unidades)</label>
-                            <input type="text" id="inVend4" class="form-control" value="1.500" oninput="simularEstoques()">
+                            <input type="text" id="simQv" class="form-control" value="40" oninput="simular()">
                         </div>
                     </div>
 
+                    <!-- Coluna da Direita: Gráfico de Barras e Banner -->
                     <div class="chart-box">
-                        <div style="font-size:0.8rem; font-weight:800; color:var(--primary); margin-bottom:8px; text-align:center;">
-                            Lucro Operacional Apurado
-                        </div>
-                        <div class="bars-container">
-                            <div class="bar-col">
-                                <div class="bar-visual abs" id="barLucroAbs" style="height:70%;"></div>
-                                <div class="bar-label">Absorção<br><span id="lblLucroAbs" style="color:var(--primary); font-weight:800;">R$ 45.000</span></div>
+                        <div class="chart-title">Lucro Operacional Apurado</div>
+                        <div class="bar-container">
+                            <div class="bar-group">
+                                <div class="bar absorcao" id="barAbs" style="height:70%;"></div>
+                                <div class="bar-name">Absorção</div>
+                                <div class="bar-val" id="lblLucroAbs" style="color:var(--primary);">R$ 1.200,00</div>
                             </div>
-                            <div class="bar-col">
-                                <div class="bar-visual var" id="barLucroVar" style="height:40%;"></div>
-                                <div class="bar-label">Variável<br><span id="lblLucroVar" style="color:var(--secondary); font-weight:800;">R$ 25.000</span></div>
+                            <div class="bar-group">
+                                <div class="bar variavel" id="barVar" style="height:55%;"></div>
+                                <div class="bar-name">Variável</div>
+                                <div class="bar-val" id="lblLucroVar" style="color:var(--secondary);">R$ 1.000,00</div>
                             </div>
                         </div>
-                        <div style="margin-top:10px; font-size:0.75rem; color:#475569; background:#F1F5F9; padding:8px; border-radius:4px;" id="lblDiferencaExplicada">
-                            Estoque final: 1.000 unidades com R$ 20,00 de custo fixo retido = R$ 20.000 de diferença!
+                        <div class="explanation-banner" id="bannerExplicativo">
+                            Aguardando cálculo...
                         </div>
                     </div>
                 </div>
+
+                <!-- Tabela de Rastreamento Passo a Passo -->
+                <div class="breakdown-section">
+                    <div class="breakdown-title">
+                        <span>🔍 Rastreamento Passo a Passo: De Onde Sai Cada Número?</span>
+                    </div>
+                    <table class="breakdown-table">
+                        <thead>
+                            <tr>
+                                <th>Linha da Demonstração</th>
+                                <th>Custeio por Absorção (Cálculo)</th>
+                                <th>Custeio Variável (Cálculo)</th>
+                                <th>Origem dos Valores</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Receita Total</strong></td>
+                                <td id="cellRecAbs">R$ 3.200,00</td>
+                                <td id="cellRecVar">R$ 3.200,00</td>
+                                <td id="cellOrigemRec">40 un vendidas × R$ 80,00</td>
+                            </tr>
+                            <tr>
+                                <td><strong>(-) Gastos Variáveis</strong></td>
+                                <td id="cellCpvVarAbs">- R$ 1.200,00</td>
+                                <td id="cellCvVar">- R$ 1.200,00</td>
+                                <td id="cellOrigemCv">40 un vendidas × R$ 30,00 de custo variável</td>
+                            </tr>
+                            <tr>
+                                <td><strong>(-) Custo Fixo Deduzido</strong></td>
+                                <td id="cellCfAbs" style="color:#DC2626;">- R$ 800,00 (no CPV)</td>
+                                <td id="cellCfVar" style="color:#DC2626;">- R$ 1.000,00 (Integral)</td>
+                                <td id="cellOrigemCf">Absorção deduz só o que vendeu; Variável deduz tudo</td>
+                            </tr>
+                            <tr class="total-row">
+                                <td><strong>(=) Lucro Operacional</strong></td>
+                                <td id="cellLucroAbsFinal" style="color:var(--primary);">R$ 1.200,00</td>
+                                <td id="cellLucroVarFinal" style="color:var(--secondary);">R$ 1.000,00</td>
+                                <td id="cellOrigemLucro">Receita menos custos deduzidos no método</td>
+                            </tr>
+                            <tr class="highlight-diff">
+                                <td><strong>Diferença no Lucro</strong></td>
+                                <td colspan="2" id="cellDiferenca" style="text-align:center;">Diferença: R$ 200,00 a mais na Absorção</td>
+                                <td id="cellOrigemDif">10 un em estoque × R$ 20,00 de fixo retido</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
             </div>
             <div class="controls"></div>
         </div>
@@ -191,22 +276,33 @@ Cenario 3: Producao = Vendas (Estoque Estavel)
         <div class="slide-card" data-slide="4">
             <div>
                 <div class="slide-header">
-                    <span class="tag">Diretriz Executiva</span>
+                    <span class="tag">Fórmula de Prova</span>
                     <span style="font-weight:700; color:var(--text-secondary);">Slide 04 / 04</span>
                 </div>
-                <h1 class="title">Como o Administrador Deve Agir?</h1>
-                <p>A síntese para quem ocupa cargos de gestão e diretoria financeira:</p>
-                
-                <div class="notepad-box">[ POSTURA ESTATISTICA E FINANCEIRA ]
-1. Para pagar Imposto de Renda e publicar Balanco Patrimonial:
-   Utilize o Custeio por Absorcao (exigencia legal do CPC 16 e da Receita Federal).
+                <h1 class="title">A Fórmula Universal de Conciliação</h1>
+                <p>Nas atividades práticas e exames, você não precisa montar duas DREs inteiras para saber a diferença entre os lucros. Basta aplicar esta fórmula direta:</p>
 
-2. Para avaliar metas comerciais, bonificacao da equipe e rentabilidade real:
-   Utilize SEMPRE o Custeio Variavel.
-   Ele impede premiar gerentes por encher estoques sem vendas reais no mercado.</div>
+                <div class="notepad-box">[ FORMULA DE CONCILIACAO DIRETA ]
 
-                <p style="text-align:center; margin-top:1.5rem;">
-                    No <strong>Tópico 5</strong>, analisaremos o <strong>Índice de Margem de Contribuição (IMC)</strong> para priorizar portfólios de vendas.
+Diferenca_no_Lucro = Lucro_Absorcao - Lucro_Variavel
+Diferenca_no_Lucro = (Volume_Produzido - Volume_Vendido) * Custo_Fixo_Unitario_Rateado
+
+Onde:
+Custo_Fixo_Unitario_Rateado = Custo_Fixo_Total / Volume_Produzido
+
+Aplicando no exemplo do simulador:
+- Custo Fixo Unitario = R$ 1.000,00 / 50 un = R$ 20,00 por peca
+- Estoque Sobrante = 50 produzidas - 40 vendidas = 10 pecas
+- Diferenca = 10 pecas * R$ 20,00 = R$ 200,00!</div>
+
+                <div class="highlight-box">
+                    <strong>Guarde para a atividade:</strong><br>
+                    • Se a produção for maior que as vendas: <em>Lucro Absorção = Lucro Variável + Custo Fixo Retido</em>.<br>
+                    • Se a produção for menor que as vendas: <em>Lucro Absorção = Lucro Variável - Custo Fixo Desovado</em>.
+                </div>
+
+                <p style="text-align:center; margin-top:1rem;">
+                    No <strong>Tópico 5</strong>, estudaremos o Índice de Margem de Contribuição (IMC) percentual!
                 </p>
             </div>
             <div class="controls"></div>
@@ -217,55 +313,92 @@ Cenario 3: Producao = Vendas (Estoque Estavel)
         let cur = 1;
         const total = 4;
 
-        function parseBR(v) { return parseFloat((v || '0').replace(/\./g, '').replace(',', '.')) || 0; }
-        function fmtMoeda(n) { return "R$ " + n.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+        function parseBR(v) { return parseFloat((v || '0').toString().replace(/\./g, '').replace(',', '.')) || 0; }
+        function fmtMoeda(n) { return "R$ " + (isNaN(n) ? 0 : n).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
 
-        function simularEstoques() {
-            const pv = parseBR(document.getElementById('inPv4').value);
-            const cv = parseBR(document.getElementById('inCv4').value);
-            const cf = parseBR(document.getElementById('inCf4').value);
-            const prod = parseBR(document.getElementById('inProd4').value) || 1;
-            const vend = parseBR(document.getElementById('inVend4').value) || 0;
+        function simular() {
+            const pv = parseBR(document.getElementById('simPv').value);
+            const cv = parseBR(document.getElementById('simCv').value);
+            const cf = parseBR(document.getElementById('simCf').value);
+            const qp = parseBR(document.getElementById('simQp').value) || 1;
+            const qv = parseBR(document.getElementById('simQv').value);
 
-            const cfUnitProd = cf / prod;
-            const receita = vend * pv;
+            // 1. Cálculos de Base
+            const rec = qv * pv;
+            const gastosVar = qv * cv;
+            const estoqueFinal = qp - qv;
+            const cfuRateado = cf / qp;
 
-            // 1. Custeio Variável
-            const mcTotal = vend * (pv - cv);
-            const lucroVar = mcTotal - cf;
+            // 2. Custeio Variável
+            const mcTot = rec - gastosVar;
+            const lucroVar = mcTot - cf;
 
-            // 2. Absorção (Estoque Inicial = 0)
-            const cpvUnit = cv + cfUnitProd;
-            const cpvTotal = vend * cpvUnit;
-            const lucroAbs = receita - cpvTotal;
+            // 3. Custeio por Absorção
+            const cfNoCpv = qv * cfuRateado;
+            const cpvTotal = gastosVar + cfNoCpv;
+            const lucroAbs = rec - cpvTotal;
 
-            const difEstoque = (prod - vend) * cfUnitProd;
+            // 4. Conciliação
+            const difLucro = lucroAbs - lucroVar;
+            const cfRetidoEstoque = estoqueFinal * cfuRateado;
 
+            // Atualiza valores nas barras
             document.getElementById('lblLucroAbs').innerText = fmtMoeda(lucroAbs);
             document.getElementById('lblLucroVar').innerText = fmtMoeda(lucroVar);
 
-            const maxL = Math.max(Math.abs(lucroAbs), Math.abs(lucroVar), 1000);
-            const hAbs = Math.min(100, Math.max(8, (Math.abs(lucroAbs) / maxL) * 100));
-            const hVar = Math.min(100, Math.max(8, (Math.abs(lucroVar) / maxL) * 100));
+            // Escala visual das barras
+            const maxLucro = Math.max(Math.abs(lucroAbs), Math.abs(lucroVar), 1);
+            const hAbs = Math.max(8, Math.min(100, (Math.abs(lucroAbs) / maxLucro) * 90));
+            const hVar = Math.max(8, Math.min(100, (Math.abs(lucroVar) / maxLucro) * 90));
+            
+            document.getElementById('barAbs').style.height = hAbs + "%";
+            document.getElementById('barVar').style.height = hVar + "%";
 
-            const barAbs = document.getElementById('barLucroAbs');
-            const barVar = document.getElementById('barLucroVar');
+            // Cores das barras se houver prejuízo
+            document.getElementById('barAbs').style.background = lucroAbs >= 0 ? 'var(--primary)' : 'var(--danger)';
+            document.getElementById('barVar').style.background = lucroVar >= 0 ? 'var(--secondary)' : 'var(--danger)';
 
-            barAbs.style.height = hAbs + "%";
-            barVar.style.height = hVar + "%";
-            barAbs.style.background = lucroAbs >= 0 ? 'var(--primary)' : 'var(--danger)';
-            barVar.style.background = lucroVar >= 0 ? 'var(--secondary)' : 'var(--danger)';
-
-            const deltaUn = prod - vend;
-            let msg = "";
-            if (deltaUn > 0) {
-                msg = `Produção superou vendas em ${deltaUn.toLocaleString('pt-BR')} un. O lucro na absorção é maior porque ${fmtMoeda(difEstoque)} de custo fixo ficou preso no estoque!`;
-            } else if (deltaUn < 0) {
-                msg = `Vendas superaram a produção em ${Math.abs(deltaUn).toLocaleString('pt-BR')} un. O lucro na absorção é menor pois desovou custos fixos estocados.`;
+            // Mensagem explicativa no banner
+            const banner = document.getElementById('bannerExplicativo');
+            if (estoqueFinal > 0) {
+                banner.style.background = "#EFF6FF";
+                banner.style.borderLeftColor = "var(--secondary)";
+                banner.innerHTML = `<strong>Produção superou vendas em ${estoqueFinal} un.</strong> O lucro na Absorção é <strong>${fmtMoeda(Math.abs(difLucro))} MAIOR</strong> porque ${fmtMoeda(cfRetidoEstoque)} de custos fixos (${estoqueFinal} un × ${fmtMoeda(cfuRateado)}) ficaram retidos no estoque do balanço!`;
+            } else if (estoqueFinal < 0) {
+                const desovadas = Math.abs(estoqueFinal);
+                banner.style.background = "#FEF2F2";
+                banner.style.borderLeftColor = "var(--danger)";
+                banner.innerHTML = `<strong>Vendas superaram a produção em ${desovadas} un (queima de estoque anterior).</strong> O lucro na Absorção é <strong>${fmtMoeda(Math.abs(difLucro))} MENOR</strong> porque ${fmtMoeda(Math.abs(cfRetidoEstoque))} de custos fixos antigos foram desovados no CPV deste mês!`;
             } else {
-                msg = `Produção rigorosamente igual às vendas. Ambos os métodos resultam exatamente no mesmo lucro operacional.`;
+                banner.style.background = "#F0FDF4";
+                banner.style.borderLeftColor = "var(--success)";
+                banner.innerHTML = `<strong>Produção igual às vendas (${qp} un).</strong> Os dois métodos apuram exatamente o mesmo lucro (<strong>${fmtMoeda(lucroVar)}</strong>), pois nenhum custo fixo foi retido nem desovado do estoque!`;
             }
-            document.getElementById('lblDiferencaExplicada').innerText = msg;
+
+            // Atualiza Tabela de Rastreamento (De onde sai cada valor)
+            document.getElementById('cellRecAbs').innerText = fmtMoeda(rec);
+            document.getElementById('cellRecVar').innerText = fmtMoeda(rec);
+            document.getElementById('cellOrigemRec').innerText = `${qv} un vendidas × ${fmtMoeda(pv)}`;
+
+            document.getElementById('cellCpvVarAbs').innerText = "- " + fmtMoeda(gastosVar);
+            document.getElementById('cellCvVar').innerText = "- " + fmtMoeda(gastosVar);
+            document.getElementById('cellOrigemCv').innerText = `${qv} un vendidas × ${fmtMoeda(cv)} (custo variável unitário)`;
+
+            document.getElementById('cellCfAbs').innerText = "- " + fmtMoeda(cfNoCpv);
+            document.getElementById('cellCfVar').innerText = "- " + fmtMoeda(cf);
+            document.getElementById('cellOrigemCf').innerText = `Absorção: ${qv} un × ${fmtMoeda(cfuRateado)} | Variável: 100% dos ${fmtMoeda(cf)}`;
+
+            document.getElementById('cellLucroAbsFinal').innerText = fmtMoeda(lucroAbs);
+            document.getElementById('cellLucroVarFinal').innerText = fmtMoeda(lucroVar);
+            document.getElementById('cellOrigemLucro').innerText = `Absorção: ${fmtMoeda(rec)} - ${fmtMoeda(cpvTotal)} | Variável: MC ${fmtMoeda(mcTot)} - CF ${fmtMoeda(cf)}`;
+
+            document.getElementById('cellDiferenca').innerText = estoqueFinal === 0 
+                ? "Diferença nula (R$ 0,00)" 
+                : `${fmtMoeda(Math.abs(difLucro))} a ${difLucro > 0 ? 'MAIOR' : 'MENOR'} na Absorção`;
+
+            document.getElementById('cellOrigemDif').innerText = estoqueFinal === 0
+                ? "Nenhum estoque retido"
+                : `${Math.abs(estoqueFinal)} un de variação de estoque × ${fmtMoeda(cfuRateado)} de custo fixo rateado`;
         }
 
         function render() {
@@ -300,7 +433,7 @@ Cenario 3: Producao = Vendas (Estoque Estavel)
 
         document.addEventListener('DOMContentLoaded', () => {
             render();
-            simularEstoques();
+            simular();
         });
     </script>
 </body>
